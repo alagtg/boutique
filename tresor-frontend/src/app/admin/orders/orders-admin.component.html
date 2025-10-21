@@ -1,0 +1,132 @@
+<div class="container">
+  <div class="header">
+    <h2>Commandes</h2>
+    <div class="tools">
+      <input type="search" [(ngModel)]="q" placeholder="Client, téléphone, adresse…" />
+      <div class="reset">
+        <input type="date" [(ngModel)]="resetDate" />
+        <button class="btn danger" (click)="resetDay()">Reset du jour</button>
+      </div>
+      <span class="msg" *ngIf="msg">{{ msg }}</span>
+    </div>
+  </div>
+
+  <!-- TABLE COMMANDES -->
+  <div class="card table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Articles</th>
+          <th>Total</th>
+          <th>Appel</th>
+          <th style="width:240px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of pageItemsO">
+          <td>{{ o.createdAt | date:'short' }}</td>
+          <td>
+            <div><strong>{{ o.customerName }}</strong></div>
+            <div class="muted">{{ o.phone }}</div>
+            <div class="muted" *ngIf="o.address">{{ o.address }}</div>
+          </td>
+          <td>
+            <div *ngFor="let i of o.items">
+              {{ i.product?.name }} ×{{ i.quantity }} ({{ i.size }} {{ i.color }})
+            </div>
+            <div class="muted" *ngIf="o.note">Note: {{ o.note }}</div>
+          </td>
+          <td>{{ total(o) | number:'1.2-2' }} TND</td>
+          <td>
+            <span class="pill"
+                  [class.pill-gray]="o.callStatus==='none'"
+                  [class.pill-green]="o.callStatus==='answered'"
+                  [class.pill-red]="o.callStatus==='noanswer'">
+              {{ o.callStatus==='answered' ? 'OK' : (o.callStatus==='noanswer' ? 'NON' : 'À appeler') }}
+            </span>
+          </td>
+          <td class="actions">
+            <a class="btn" [href]="telHref(o.phone)">Appeler</a>
+            <button class="btn ok" (click)="markAnswered(o)">OK</button>
+            <button class="btn warn" (click)="markNoAnswer(o)">NON</button>
+            <button class="btn ghost" (click)="resetCall(o)">↺</button>
+            <button class="btn danger" (click)="archive(o)">Archiver</button>
+          </td>
+        </tr>
+        <tr *ngIf="pageItemsO.length===0">
+          <td colspan="6" style="text-align:center;opacity:.7">Aucune commande</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- PAGINATION COMMANDES -->
+    <div class="pagination">
+      <button class="pg-btn" (click)="prevO()" [disabled]="pageO===1">Précédent</button>
+
+      <ng-container *ngFor="let n of pagesO">
+        <button *ngIf="n>0" class="pg-btn" [class.active]="n===pageO" (click)="goToO(n)">{{ n }}</button>
+        <span *ngIf="n===-1" class="pg-ellipsis">…</span>
+      </ng-container>
+
+      <button class="pg-btn" (click)="nextO()" [disabled]="pageO===totalPagesO">Suivant</button>
+      <span class="pg-info">Page {{pageO}} / {{totalPagesO}}</span>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="card" style="padding:16px">Chargement…</div>
+  </ng-template>
+
+  <!-- CARNET CLIENTS -->
+  <div class="header" style="margin-top:24px">
+    <h2>Carnet clients</h2>
+    <div class="tools">
+      <input type="search" [(ngModel)]="qC" placeholder="Nom, téléphone, ville…" />
+    </div>
+  </div>
+
+  <div class="card table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Téléphone</th>
+          <th>Lieu</th>
+          <th>Dernière commande</th>
+          <th>Nb commandes</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of pageItemsC">
+          <td><strong>{{ c.name || '—' }}</strong></td>
+          <td>{{ c.phone }}</td>
+          <td>{{ c.address || '—' }}</td>
+          <td>{{ c.lastOrderAt | date:'short' }}</td>
+          <td>{{ c.ordersCount }}</td>
+          <td class="actions">
+            <a class="btn" [href]="telHref(c.phone)">Appeler</a>
+          </td>
+        </tr>
+        <tr *ngIf="pageItemsC.length===0">
+          <td colspan="6" style="text-align:center;opacity:.7">Aucun client</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- PAGINATION CLIENTS -->
+    <div class="pagination">
+      <button class="pg-btn" (click)="prevC()" [disabled]="pageC===1">Précédent</button>
+
+      <ng-container *ngFor="let n of pagesC">
+        <button *ngIf="n>0" class="pg-btn" [class.active]="n===pageC" (click)="goToC(n)">{{ n }}</button>
+        <span *ngIf="n===-1" class="pg-ellipsis">…</span>
+      </ng-container>
+
+      <button class="pg-btn" (click)="nextC()" [disabled]="pageC===totalPagesC">Suivant</button>
+      <span class="pg-info">Page {{pageC}} / {{totalPagesC}}</span>
+    </div>
+  </div>
+</div>

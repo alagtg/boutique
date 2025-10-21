@@ -1,0 +1,95 @@
+<div class="container">
+  <div class="header">
+    <h2>Dépenses</h2>
+    <div class="filters">
+      <input type="month" [(ngModel)]="month" />
+      <input type="search" [(ngModel)]="q" placeholder="Rechercher libellé / notes…" />
+      <span class="msg" *ngIf="msg">{{ msg }}</span>
+    </div>
+  </div>
+
+  <!-- Résumé du mois -->
+  <div class="cards">
+    <div class="card kpi">
+      <strong>Total mois</strong>
+      <div [class.negative]="totalMois<0" [class.positive]="totalMois>0">{{ formatTND(totalMois) }}</div>
+    </div>
+    <div class="card kpi">
+      <strong>Dépenses (−)</strong>
+      <div class="negative">{{ formatTND(depensesMois) }}</div>
+    </div>
+    <div class="card kpi">
+      <strong>Recettes (+)</strong>
+      <div class="positive">{{ formatTND(recettesMois) }}</div>
+    </div>
+    <div class="card kpi">
+      <strong>Lignes</strong>
+      <div>{{ filtered.length }}</div>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <form (ngSubmit)="add()" class="card form">
+    <div class="form-grid">
+      <label>Libellé
+        <input [(ngModel)]="model.label" name="label" required placeholder="Ex: Achat emballages" />
+      </label>
+
+      <div class="row">
+        <label>Montant
+          <input type="number" [(ngModel)]="model.amount" name="amount" step="0.1" />
+          <small class="hint">Dépense = négatif, Recette = positif</small>
+        </label>
+        <label>Date
+          <input type="date" [(ngModel)]="model.date" name="date" />
+        </label>
+      </div>
+
+      <label>Notes
+        <input [(ngModel)]="model.notes" name="notes" placeholder="Facultatif (fournisseur, mode de paiement…)" />
+      </label>
+
+      <div class="buttons">
+        <button class="btn primary" type="submit">Ajouter</button>
+        <button type="button" class="btn" (click)="resetForm()">Réinitialiser</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tableau -->
+  <div class="card table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:120px">Date</th>
+          <th>Libellé</th>
+          <th>Notes</th>
+          <th style="width:140px">Montant</th>
+          <th style="width:110px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of filtered">
+          <td>{{ e.date | date:'yyyy-MM-dd' }}</td>
+          <td>{{ e.label }}</td>
+          <td class="muted">{{ e.notes }}</td>
+          <td>
+            <span [class.negative]="e.amount<0" [class.positive]="e.amount>0">
+              {{ formatTND(e.amount) }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn danger" (click)="del(e.id)">Supprimer</button>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length===0">
+          <td colspan="5" style="text-align:center;opacity:.7">Aucune ligne pour ce filtre</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="card" style="padding:16px">Chargement…</div>
+  </ng-template>
+</div>

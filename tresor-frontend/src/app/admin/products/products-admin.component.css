@@ -1,0 +1,35 @@
+.container{max-width:1100px;margin:0 auto;padding:16px}
+.card{border:1px solid var(--beige);border-radius:16px;background:#fff}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.actions{display:flex;gap:12px;align-items:center}
+.actions input[type="search"]{padding:8px 10px;border:1px solid #ddd;border-radius:10px;min-width:280px}
+.msg{opacity:.9}
+
+.form{padding:16px}
+.form-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+.form label{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.form input, .form textarea, .form select{padding:10px;border:1px solid #ddd;border-radius:10px}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.checkbox{align-items:center;flex-direction:row;gap:8px}
+.buttons{display:flex;gap:8px;margin-top:6px}
+.btn{padding:8px 14px;border-radius:999px;border:1px solid var(--gold);background:#fff;cursor:pointer}
+.btn.primary{background:linear-gradient(145deg,#c9a959,#e6cd84);color:#fff;border:none}
+.btn.danger{border-color:#cc3333;color:#cc3333}
+.upload .preview{border:1px dashed #ddd;border-radius:12px;overflow:hidden;height:220px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.upload .preview img{width:100%;height:100%;object-fit:cover}
+.upload .drop{border:1px dashed #ddd;border-radius:12px;height:220px;display:grid;place-items:center;color:#777;margin-bottom:8px}
+.upload input[type="file"]{display:block;margin:6px 0}
+.upload .hint{opacity:.7}
+.uploading{margin-top:6px;opacity:.9}
+
+.table-wrapper{padding:0;overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+.thumb{height:56px;width:56px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+.row-actions{display:flex;gap:8px}
+.chip{padding:4px 10px;border-radius:999px;border:1px solid #ddd;background:#f7f7f7}
+.chip.ok{border-color:#61ad36;background:#e9f6e3}
+@media (max-width:900px){
+  .form-grid{grid-template-columns:1fr}
+  .form .row{grid-template-columns:1fr}
+}

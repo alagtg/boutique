@@ -1,0 +1,117 @@
+<div class="product-detail-page" *ngIf="product">
+  <div class="container" style="padding: 32px 16px">
+    <a routerLink="/" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Retour aux produits
+    </a>
+
+    <div class="product-detail-grid">
+      <div class="product-image-section">
+        <div class="main-image">
+          <img [src]="product.imageUrl || 'assets/no-image.png'" [alt]="product.name">
+        </div>
+      </div>
+
+      <div class="product-info-section">
+        <div class="product-header">
+          <span class="badge">{{product.category}}</span>
+          <h1 style="font-family: 'Playfair Display', serif; font-size: 36px; margin: 12px 0">
+            {{product.name}}
+          </h1>
+          <div class="price-tag">{{product.price}} TND</div>
+          <p *ngIf="product.description" style="color: #666; line-height: 1.6; margin: 16px 0">
+            {{product.description}}
+          </p>
+        </div>
+
+        <!-- Personnalisation -->
+        <div class="order-form">
+          <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 20px; font-size: 22px">
+            Personnalisez votre commande
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Taille</label>
+              <select [(ngModel)]="size" class="form-select">
+                <option>S</option><option>M</option><option>L</option><option>XL</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Couleur</label>
+              <select [(ngModel)]="color" class="form-select">
+                <option>Beige</option><option>Noir</option><option>Blanc</option><option>Doré</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Quantité</label>
+              <input type="number" min="1" [max]="product.stock" [(ngModel)]="qty" class="form-input">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 20px; font-size: 22px">
+            Vos coordonnées
+          </h3>
+
+          <form #orderForm="ngForm" novalidate>
+            <div class="form-group">
+              <label class="form-label">Nom complet <span style="color:#b00020">*</span></label>
+              <input [(ngModel)]="name" name="name" class="form-input" required
+                     #nameCtrl="ngModel" placeholder="Votre nom et prénom" />
+              <small class="error" *ngIf="nameCtrl.invalid && (nameCtrl.touched || triedSubmit)">Nom requis</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Téléphone <span style="color:#b00020">*</span></label>
+              <input [(ngModel)]="phone" name="phone" class="form-input" required
+                     pattern="^(\+?216)?\s?\d{2}\s?\d{3}\s?\d{3}$|^\d{8}$"
+                     #phoneCtrl="ngModel" placeholder="+216 XX XXX XXX ou 8 chiffres" />
+              <small class="error" *ngIf="phoneCtrl.invalid && (phoneCtrl.touched || triedSubmit)">
+                Téléphone tunisien valide requis
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Adresse de livraison <span style="color:#b00020">*</span></label>
+              <input [(ngModel)]="address" name="address" class="form-input" required
+                     #addressCtrl="ngModel" placeholder="Votre adresse complète" />
+              <small class="error" *ngIf="addressCtrl.invalid && (addressCtrl.touched || triedSubmit)">Adresse requise</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Note (optionnel)</label>
+              <textarea [(ngModel)]="note" name="note" class="form-textarea" rows="3"
+                        placeholder="Ex: livraison à Houmet Souk, préférence d'horaire..."></textarea>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" type="button"
+                      [disabled]="!orderForm.form.valid || qty<1 || qty>product.stock"
+                      (click)="buy(orderForm)">
+                Commander maintenant
+              </button>
+
+              <a class="btn btn-whatsapp"
+                 [class.btn-disabled]="!orderForm.form.valid"
+                 [attr.aria-disabled]="!orderForm.form.valid"
+                 [href]="orderForm.form.valid ? whatsappHref() : null"
+                 target="_blank">
+                WhatsApp
+              </a>
+            </div>
+          </form>
+
+          <p *ngIf="msg" class="message" [class.success]="msgType==='success'" [class.error]="msgType==='error'">
+            {{msg}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

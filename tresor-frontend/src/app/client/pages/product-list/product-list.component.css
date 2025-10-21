@@ -1,0 +1,157 @@
+:root {
+  --gold: #d4af37;
+  --gold-soft: #e2c76a;
+  --beige: #f5e9d0;
+  --dark: #222;
+  --light: #fff;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(180deg, rgba(212,175,55,0.07), rgba(212,175,55,0.0)),
+              radial-gradient(1200px 400px at 50% -50%, rgba(212,175,55,0.2), transparent);
+  border-bottom: 2px solid var(--beige);
+}
+
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 30px;
+  padding: 48px 0;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  margin: 0 0 10px;
+}
+
+.hero p {
+  font-size: 18px;
+  margin: 0 0 20px;
+}
+
+.hero-img {
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid var(--beige);
+}
+
+/* CARDS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.card {
+  border: 1px solid var(--beige);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.card img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
+.info {
+  padding: 14px;
+}
+
+.info-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  margin: 24px 0 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--beige);
+  color: #7a6b3a;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* PAGINATION */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.pg-btn {
+  background: transparent;
+  border: 1px solid var(--beige);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.pg-btn.active {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+
+.pg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pg-info {
+  font-size: 14px;
+  opacity: .8;
+}
+
+/* SPINNER */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--beige);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero .wrap {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 36px;
+  }
+}

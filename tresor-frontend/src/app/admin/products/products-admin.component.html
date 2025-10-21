@@ -1,0 +1,120 @@
+<div class="container">
+  <div class="header">
+    <h2>Produits</h2>
+    <div class="actions">
+      <input type="search" [(ngModel)]="q" (ngModelChange)="applyFilter()" placeholder="Rechercher par nom/catégorie…" />
+      <span class="msg" *ngIf="msg">{{ msg }}</span>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE -->
+  <form (ngSubmit)="save()" #f="ngForm" class="card form">
+    <div class="form-grid">
+      <div class="col">
+        <label>Nom
+          <input [(ngModel)]="model.name" name="name" required />
+        </label>
+
+        <div class="row">
+          <label>Prix
+            <input type="number" [(ngModel)]="model.price" name="price" min="0" step="0.1" required />
+          </label>
+          <label>Stock
+            <input type="number" [(ngModel)]="model.stock" name="stock" min="0" required />
+          </label>
+        </div>
+
+        <label>Catégorie
+          <select [(ngModel)]="model.category" name="category">
+            <option>Autre</option>
+            <option>Robe</option>
+            <option>Chaussure</option>
+            <option>Accessoire</option>
+          </select>
+        </label>
+
+        <label>Description
+          <textarea rows="3" [(ngModel)]="model.description" name="description" placeholder="Courte description…"></textarea>
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" [(ngModel)]="model.isPublished" name="isPublished" />
+          Publier
+        </label>
+
+        <div class="buttons">
+          <button class="btn primary" type="submit" [disabled]="isUploading || !f.valid">
+            {{ editingId ? 'Mettre à jour' : 'Enregistrer' }}
+          </button>
+          <button type="button" class="btn" (click)="resetForm()">Nouveau</button>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="upload">
+          <div class="preview" *ngIf="imagePreview; else placeholder">
+            <img [src]="imagePreview" alt="preview">
+          </div>
+          <ng-template #placeholder>
+            <div class="drop">
+              <span>Prévisualisation</span>
+            </div>
+          </ng-template>
+
+          <input type="file" accept="image/*" (change)="onFileChange($event)" />
+          <small class="hint">JPG/PNG, max 5MB. Ou laissez vide si vous gardez l’URL existante.</small>
+
+          <label>Image URL (optionnel)
+            <input [(ngModel)]="model.imageUrl" name="imageUrl" placeholder="/assets/xxx.jpg ou https://…" />
+          </label>
+
+          <div *ngIf="isUploading" class="uploading">⏳ Téléversement…</div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- TABLEAU -->
+  <div class="card table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Nom</th>
+          <th>Catégorie</th>
+          <th>Prix</th>
+          <th>Stock</th>
+          <th>Publié</th>
+          <th style="width:180px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of filtered">
+          <td><img [src]="p.imageUrl || 'assets/no-image.png'" alt="" class="thumb"></td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.category }}</td>
+          <td>{{ p.price | number:'1.2-2' }} TND</td>
+          <td>{{ p.stock }}</td>
+          <td>
+            <button class="chip" [class.ok]="p.isPublished" (click)="togglePublish(p)">
+              {{ p.isPublished ? 'Oui' : 'Non' }}
+            </button>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="btn" (click)="edit(p)">Éditer</button>
+              <button class="btn danger" (click)="remove(p)">Supprimer</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length===0">
+          <td colspan="7" style="text-align:center;opacity:.7">Aucun produit</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="card" style="padding:16px">Chargement…</div>
+  </ng-template>
+</div>

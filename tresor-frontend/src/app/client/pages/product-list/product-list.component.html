@@ -1,0 +1,79 @@
+<div class="product-list-page">
+
+  <!-- ========= HERO ========= -->
+  <section class="hero">
+    <div class="container wrap">
+      <div>
+        <h1>Élégance dorée,<br>style intemporel.</h1>
+        <p>
+          Découvrez nos robes, sacs et chaussures, sélectionnés avec amour à Djerba.
+        </p>
+        <a class="btn" href="#products">Voir la collection</a>
+        <a routerLink="/contact" class="btn ghost" style="margin-left:8px;">Nous contacter</a>
+      </div>
+      <div>
+        <img src="assets/boutiquefinal.png" alt="Robe élégante" class="hero-img" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ========= PRODUITS PHARES 
+  <div class="container">
+    <h2 class="section-title">Nos produits phares</h2>
+    <div class="card-grid">
+      <div class="card" *ngFor="let item of [
+        {name:'Robe Fleurie',price:129,img:'robe2.jpg',desc:'Tailles: S, M, L'},
+        {name:'Sac Chic',price:89,img:'sac1.jpg',desc:'Couleurs: Noir, Beige'},
+        {name:'Chaussure Dorée',price:149,img:'chaussure1.jpg',desc:'Pointures: 36–41'}
+      ]">
+        <img [src]="'assets/images/'+item.img" [alt]="item.name" />
+        <div class="info">
+          <div class="info-head">
+            <strong>{{ item.name }}</strong>
+            <span class="price">{{ item.price }} TND</span>
+          </div>
+          <p class="small">{{ item.desc }}</p>
+          <a href="#products" class="btn" style="width:100%; text-align:center">Acheter</a>
+        </div>
+      </div>
+    </div>
+  </div> ========= -->
+
+  <!-- ========= TOUS LES PRODUITS (API) ========= -->
+  <div id="products" class="container" style="padding: 48px 16px">
+    <h2 class="section-title">Tous les produits</h2>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des produits...</p>
+    </div>
+
+    <div class="card-grid" *ngIf="!loading && products.length > 0">
+      <div class="card" *ngFor="let p of pageItems; trackBy: trackById">
+        <img [src]="p.imageUrl || 'assets/no-image.png'" [alt]="p.name" />
+        <div class="info">
+          <div class="info-head">
+            <strong>{{ p.name }}</strong>
+            <span class="price">{{ p.price }} TND</span>
+          </div>
+          <p class="small">{{ p.stock }} en stock</p>
+          <a [routerLink]="['/produit', p.id]" class="btn" style="width:100%; text-align:center">Voir détails</a>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && products.length === 0" class="empty-state">
+      <p>Aucun produit disponible.</p>
+    </div>
+
+    <div class="pagination" *ngIf="!loading && products.length > 0">
+      <button class="pg-btn" (click)="prev()" [disabled]="page===1">Précédent</button>
+      <ng-container *ngFor="let n of pageNumbers">
+        <button *ngIf="n>0" class="pg-btn" [class.active]="n===page" (click)="goTo(n)">{{ n }}</button>
+        <span *ngIf="n===-1" class="pg-ellipsis">…</span>
+      </ng-container>
+      <button class="pg-btn" (click)="next()" [disabled]="page===totalPages">Suivant</button>
+      <span class="pg-info">Page {{page}} / {{totalPages}}</span>
+    </div>
+  </div>
+</div>

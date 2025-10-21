@@ -1,0 +1,69 @@
+<div class="dash">
+  <div class="dash-header">
+    <div class="left">
+      <h1>Dashboard</h1>
+      <div class="sub">{{ todayNice }}</div>
+    </div>
+    <div class="right">
+      <button class="btn" (click)="refresh()">↻ Rafraîchir</button>
+    </div>
+  </div>
+
+  <div class="alert error" *ngIf="error() && !loading()">
+    ❌ {{ error() }}
+  </div>
+
+  <div class="cards">
+    <div class="card kpi">
+      <div class="icon">💰</div>
+      <div class="label">CA du jour</div>
+      <div class="value" *ngIf="!loading(); else loadingVal">{{ caJour() | number:'1.2-2' }} TND</div>
+      <div class="hint">Ventes encaissées aujourd’hui • {{ nbCmdJour() }} commande(s)</div>
+    </div>
+
+    <div class="card kpi">
+      <div class="icon">📅</div>
+      <div class="label">CA du mois</div>
+      <div class="value" *ngIf="!loading(); else loadingVal">{{ caMois() | number:'1.2-2' }} TND</div>
+      <div class="hint">Cumul depuis le 1er • {{ nbCmdMois() }} commande(s)</div>
+    </div>
+
+    <div class="card kpi">
+      <div class="icon">💸</div>
+      <div class="label">Dépenses mois</div>
+      <div class="value" *ngIf="!loading(); else loadingVal">{{ depensesMois() | number:'1.2-2' }} TND</div>
+      <div class="hint">Charges & achats</div>
+    </div>
+
+    <div class="card kpi">
+      <div class="icon">📈</div>
+      <div class="label">Bénéfice net</div>
+      <div class="value" *ngIf="!loading(); else loadingVal">{{ beneficeNet() | number:'1.2-2' }} TND</div>
+      <div class="hint">CA mois – Dépenses mois</div>
+    </div>
+  </div>
+
+  <ng-template #loadingVal>
+    <div class="skeleton-value">—</div>
+  </ng-template>
+
+   <!-- <div class="grid">
+    <div class="card">
+      <div class="card-title">Aperçu rapide</div>
+      <div class="muted">
+        Espace pour futures métriques (taux de conversion, top produits, etc.).<br>
+        Tu peux aussi mettre un petit graphique ou un tableau des 5 dernières commandes.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Actions rapides</div>
+      <div class="quick-actions">
+        <a routerLink="/admin/commandes" class="btn link">Voir les commandes</a>
+        <a routerLink="/admin/produits"  class="btn link">Gérer les produits</a>
+        <a routerLink="/admin/depenses"  class="btn link">Saisir une dépense</a>
+      </div>
+    </div>
+  </div>
+   -->
+</div>

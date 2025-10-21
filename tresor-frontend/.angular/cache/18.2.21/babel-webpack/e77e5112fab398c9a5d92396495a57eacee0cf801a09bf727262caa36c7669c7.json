@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  \"production\": false,\n  \"apiBase\": \"http://localhost:5000/api\",\n  \"whatsApp\": \"21650878068\",\n  \"mapUrl\": \"https://maps.app.goo.gl/2KESYMRE7V8dmNfx8\"\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

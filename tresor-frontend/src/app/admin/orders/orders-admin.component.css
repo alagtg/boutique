@@ -1,0 +1,38 @@
+.container{max-width:1100px;margin:0 auto;padding:16px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.tools input[type="search"], .tools input[type="date"]{padding:8px 10px;border:1px solid #ddd;border-radius:10px}
+.reset{display:flex;gap:8px;align-items:center}
+.msg{opacity:.9}
+.card{border:1px solid var(--beige);border-radius:16px;background:#fff}
+.table-wrapper{padding:0;overflow:auto}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+thead th{background:#faf8f2}
+.muted{opacity:.75}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+
+.btn{padding:6px 10px;border-radius:999px;border:1px solid #ccc;background:#fff;cursor:pointer;text-decoration:none}
+.btn.ok{border-color:#61ad36;color:#1b8f3a;background:#e9f6e3}
+.btn.warn{border-color:#cc7a00;color:#cc7a00;background:#fffaf0}
+.btn.ghost{border-color:#ddd;color:#555;background:#fff}
+.btn.danger{border-color:#cc3333;color:#cc3333;background:#fff}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;border:1px solid #ddd;font-size:12px}
+.pill-gray{background:#f2f2f2;color:#555;border-color:#ddd}
+.pill-green{background:#e9f6e3;color:#1b8f3a;border-color:#61ad36}
+.pill-red{background:#ffe8e8;color:#b00020;border-color:#f2a8a8}
+
+/* Pagination style “comme l’exemple” */
+.pagination{
+  display:flex;align-items:center;gap:8px;
+  justify-content:center;padding:12px;border-top:1px solid #eee;background:#fff
+}
+.pg-btn{
+  min-width:36px;padding:6px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer
+}
+.pg-btn.active{background:#222;color:#fff;border-color:#222}
+.pg-btn:disabled{opacity:.5;cursor:not-allowed}
+.pg-ellipsis{padding:0 4px;opacity:.6}
+.pg-info{margin-left:8px;opacity:.75}
