@@ -1,0 +1,10 @@
+Initial chunk files | Names         |  Raw size | Estimated transfer size
+main.js             | main          | 183.79 kB |                23.90 kB
+styles.css          | styles        |  12.84 kB |                 2.92 kB
+
+                    | Initial total | 196.63 kB |                26.82 kB
+
+Application bundle generation complete. [11.421 seconds]
+
+Watch mode enabled. Watching for file changes...
+  ➜  Local:   http://127.0.0.1:4200/

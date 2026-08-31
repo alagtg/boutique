@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\PC\\Desktop\\mes traivail\\tresor-boutique-v2\\backend\\wwwroot\\uploads\\expenses\\feec16bc426c48ef94ff07ef70362a3f.png",
+      "PackagePath": "staticwebassets\\uploads\\expenses\\feec16bc426c48ef94ff07ef70362a3f.png"
+    },
+    {
+      "Id": "C:\\Users\\PC\\Desktop\\mes traivail\\tresor-boutique-v2\\backend\\wwwroot\\uploads\\products\\14007c820e76473a92eb7fb2e09d6db3.png",
+      "PackagePath": "staticwebassets\\uploads\\products\\14007c820e76473a92eb7fb2e09d6db3.png"
+    },
+    {
+      "Id": "C:\\Users\\PC\\Desktop\\mes traivail\\tresor-boutique-v2\\backend\\wwwroot\\uploads\\products\\50879e8206fd47f98da0bfea44255e5c.png",
+      "PackagePath": "staticwebassets\\uploads\\products\\50879e8206fd47f98da0bfea44255e5c.png"
+    },
+    {
+      "Id": "C:\\Users\\PC\\Desktop\\mes traivail\\tresor-boutique-v2\\backend\\wwwroot\\uploads\\products\\dc35bcbe31cd4858a9361ce426c2c2cb.png",
+      "PackagePath": "staticwebassets\\uploads\\products\\dc35bcbe31cd4858a9361ce426c2c2cb.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Tresor.Api.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Tresor.Api.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Tresor.Api.props",
+      "PackagePath": "build\\Tresor.Api.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Tresor.Api.props",
+      "PackagePath": "buildMultiTargeting\\Tresor.Api.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Tresor.Api.props",
+      "PackagePath": "buildTransitive\\Tresor.Api.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

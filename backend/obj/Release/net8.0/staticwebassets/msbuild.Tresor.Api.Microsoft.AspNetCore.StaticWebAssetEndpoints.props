@@ -1,0 +1,52 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/expenses/feec16bc426c48ef94ff07ef70362a3f.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\expenses\feec16bc426c48ef94ff07ef70362a3f.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"68"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ=\u0022"},{"Name":"Last-Modified","Value":"Tue, 07 Jul 2026 10:18:52 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/expenses/feec16bc426c48ef94ff07ef70362a3f.rcktkrrzyz.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\expenses\feec16bc426c48ef94ff07ef70362a3f.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"rcktkrrzyz"},{"Name":"integrity","Value":"sha256-S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ="},{"Name":"label","Value":"_content/Tresor.Api/uploads/expenses/feec16bc426c48ef94ff07ef70362a3f.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"68"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ=\u0022"},{"Name":"Last-Modified","Value":"Tue, 07 Jul 2026 10:18:52 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/products/14007c820e76473a92eb7fb2e09d6db3.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\products\14007c820e76473a92eb7fb2e09d6db3.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-M7apDnc3bMbwCpERLeZQ1ypt8ngAC7YEUYLyY4Lw0jE="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"1791554"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022M7apDnc3bMbwCpERLeZQ1ypt8ngAC7YEUYLyY4Lw0jE=\u0022"},{"Name":"Last-Modified","Value":"Tue, 07 Jul 2026 10:22:23 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/products/14007c820e76473a92eb7fb2e09d6db3.tgj1xgvpyl.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\products\14007c820e76473a92eb7fb2e09d6db3.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"tgj1xgvpyl"},{"Name":"integrity","Value":"sha256-M7apDnc3bMbwCpERLeZQ1ypt8ngAC7YEUYLyY4Lw0jE="},{"Name":"label","Value":"_content/Tresor.Api/uploads/products/14007c820e76473a92eb7fb2e09d6db3.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1791554"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022M7apDnc3bMbwCpERLeZQ1ypt8ngAC7YEUYLyY4Lw0jE=\u0022"},{"Name":"Last-Modified","Value":"Tue, 07 Jul 2026 10:22:23 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/products/50879e8206fd47f98da0bfea44255e5c.9ur8y3m1wz.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\products\50879e8206fd47f98da0bfea44255e5c.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"9ur8y3m1wz"},{"Name":"integrity","Value":"sha256-8SwDgfPE6Rw\u002B7usk0LF9ADL5ogAHWZy0d0O2EtjIFXk="},{"Name":"label","Value":"_content/Tresor.Api/uploads/products/50879e8206fd47f98da0bfea44255e5c.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"125014"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u00228SwDgfPE6Rw\u002B7usk0LF9ADL5ogAHWZy0d0O2EtjIFXk=\u0022"},{"Name":"Last-Modified","Value":"Fri, 10 Jul 2026 23:11:04 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/products/50879e8206fd47f98da0bfea44255e5c.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\products\50879e8206fd47f98da0bfea44255e5c.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-8SwDgfPE6Rw\u002B7usk0LF9ADL5ogAHWZy0d0O2EtjIFXk="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"125014"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u00228SwDgfPE6Rw\u002B7usk0LF9ADL5ogAHWZy0d0O2EtjIFXk=\u0022"},{"Name":"Last-Modified","Value":"Fri, 10 Jul 2026 23:11:04 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/products/dc35bcbe31cd4858a9361ce426c2c2cb.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\products\dc35bcbe31cd4858a9361ce426c2c2cb.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"68"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ=\u0022"},{"Name":"Last-Modified","Value":"Tue, 07 Jul 2026 09:58:44 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Tresor.Api/uploads/products/dc35bcbe31cd4858a9361ce426c2c2cb.rcktkrrzyz.png">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\products\dc35bcbe31cd4858a9361ce426c2c2cb.png'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"rcktkrrzyz"},{"Name":"integrity","Value":"sha256-S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ="},{"Name":"label","Value":"_content/Tresor.Api/uploads/products/dc35bcbe31cd4858a9361ce426c2c2cb.png"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"68"},{"Name":"Content-Type","Value":"image/png"},{"Name":"ETag","Value":"\u0022S1xcks7Dsj5qKU/A7qQyNO9RJsWmT0xsUxrIQwqwuEQ=\u0022"},{"Name":"Last-Modified","Value":"Tue, 07 Jul 2026 09:58:44 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>

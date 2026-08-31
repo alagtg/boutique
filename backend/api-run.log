@@ -1,0 +1,2447 @@
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (39ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "type" = 'table' AND "rootpage" IS NOT NULL;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE IF NOT EXISTS StockPurchases (
+    Id INTEGER NOT NULL CONSTRAINT PK_StockPurchases PRIMARY KEY AUTOINCREMENT,
+    ProductVariantId INTEGER NOT NULL,
+    Quantity INTEGER NOT NULL,
+    UnitPurchasePrice decimal(18,2) NOT NULL,
+    PurchaseDate TEXT NOT NULL,
+    Notes TEXT NULL,
+    CreatedAt TEXT NOT NULL,
+    UpdatedAt TEXT NULL,
+    CONSTRAINT FK_StockPurchases_ProductVariants_ProductVariantId
+        FOREIGN KEY (ProductVariantId) REFERENCES ProductVariants (Id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS IX_StockPurchases_ProductVariantId ON StockPurchases (ProductVariantId);
+CREATE TABLE IF NOT EXISTS AppMetadata (
+    Key TEXT NOT NULL CONSTRAINT PK_AppMetadata PRIMARY KEY,
+    Value TEXT NOT NULL
+);
+UPDATE ProductVariants
+SET PurchasePrice = 0
+WHERE NOT EXISTS (SELECT 1 FROM AppMetadata WHERE Key = 'LegacyStockCostReset20260711');
+INSERT OR IGNORE INTO AppMetadata (Key, Value)
+VALUES ('LegacyStockCostReset20260711', 'Existing stock was already paid; initial cost reset to zero.');
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE Expenses ADD COLUMN ReceiptImagePath TEXT
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE StoreSettings ADD COLUMN WheelPrizes TEXT NOT NULL DEFAULT 'Cadeau boutique|Reduction 10%|Bon achat 20 DT|Surprise prochaine visite'
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE StoreSettings ADD COLUMN MonthlyGiftPrize TEXT NOT NULL DEFAULT 'Cadeau mensuel Tresor Boutique'
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      ALTER TABLE StoreSettings ADD COLUMN MonthlyGiftReminderMessage TEXT NOT NULL DEFAULT 'Rappel fin de mois: faites le tirage cadeau parmi tous les clients qui ont achete ce mois.'
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\backend
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."ProductVariantId", "p0"."ProductName" AS "productName", "p0"."Reference" AS "reference", "p"."Barcode" AS "barcode", (
+          SELECT "p1"."ImagePath"
+          FROM "ProductImages" AS "p1"
+          WHERE "p0"."Id" = "p1"."ProductId"
+          ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+          LIMIT 1) AS "imageUrl", "s"."Quantity", "s"."UnitPurchasePrice", ef_multiply("s"."UnitPurchasePrice", CAST("s"."Quantity" AS decimal(18,2))) AS "totalAmount", "s"."PurchaseDate", "s"."Notes"
+      FROM "StockPurchases" AS "s"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      ORDER BY "s"."PurchaseDate" DESC, "s"."Id" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id" AS "productVariantId", "p0"."ProductName" AS "productName", "p0"."Reference" AS "reference", "p"."Barcode", (
+          SELECT "p1"."ImagePath"
+          FROM "ProductImages" AS "p1"
+          WHERE "p0"."Id" = "p1"."ProductId"
+          ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+          LIMIT 1) AS "imageUrl", "p"."CurrentStock" AS "quantity"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "p"."IsActive" AND "p0"."IsActive"
+      ORDER BY "p0"."ProductName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."ProductVariantId", "s"."Quantity", "s"."UnitPurchasePrice", "s"."PurchaseDate", "s"."Id"
+      FROM "StockPurchases" AS "s"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__threshold_0='?' (DbType = Decimal), @__threshold_0_1='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."TotalSpentCurrentMonth", "c"."QrCodeToken", 1 AS "eligible", @__threshold_0 AS "threshold"
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."TotalSpentCurrentMonth", @__threshold_0_1) >= 0
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (18ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "s0"."Id", "s0"."CashSessionId", "s0"."CreatedAt", "s0"."CustomerId", "s0"."DiscountAmount", "s0"."PaidAmount", "s0"."RemainingAmount", "s0"."SaleDate", "s0"."SaleNumber", "s0"."SaleStatus", "s0"."SubtotalAmount", "s0"."TotalAmount", "s0"."UpdatedAt", "s0"."UserId"
+      FROM "Customers" AS "c"
+      LEFT JOIN "Sales" AS "s0" ON "c"."Id" = "s0"."CustomerId"
+      WHERE EXISTS (
+          SELECT 1
+          FROM "Sales" AS "s"
+          WHERE "c"."Id" = "s"."CustomerId" AND CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1)
+      ORDER BY "c"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "s0"."Id", "s0"."CashSessionId", "s0"."CreatedAt", "s0"."CustomerId", "s0"."DiscountAmount", "s0"."PaidAmount", "s0"."RemainingAmount", "s0"."SaleDate", "s0"."SaleNumber", "s0"."SaleStatus", "s0"."SubtotalAmount", "s0"."TotalAmount", "s0"."UpdatedAt", "s0"."UserId"
+      FROM "Customers" AS "c"
+      LEFT JOIN "Sales" AS "s0" ON "c"."Id" = "s0"."CustomerId"
+      WHERE EXISTS (
+          SELECT 1
+          FROM "Sales" AS "s"
+          WHERE "c"."Id" = "s"."CustomerId" AND CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1)
+      ORDER BY "c"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__threshold_0='?' (DbType = Decimal), @__threshold_0_1='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."TotalSpentCurrentMonth", "c"."QrCodeToken", 1 AS "eligible", @__threshold_0 AS "threshold"
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."TotalSpentCurrentMonth", @__threshold_0_1) >= 0
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__threshold_0='?' (DbType = Decimal), @__threshold_0_1='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."TotalSpentCurrentMonth", "c"."QrCodeToken", 1 AS "eligible", @__threshold_0 AS "threshold"
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."TotalSpentCurrentMonth", @__threshold_0_1) >= 0
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "s0"."Id", "s0"."CashSessionId", "s0"."CreatedAt", "s0"."CustomerId", "s0"."DiscountAmount", "s0"."PaidAmount", "s0"."RemainingAmount", "s0"."SaleDate", "s0"."SaleNumber", "s0"."SaleStatus", "s0"."SubtotalAmount", "s0"."TotalAmount", "s0"."UpdatedAt", "s0"."UserId"
+      FROM "Customers" AS "c"
+      LEFT JOIN "Sales" AS "s0" ON "c"."Id" = "s0"."CustomerId"
+      WHERE EXISTS (
+          SELECT 1
+          FROM "Sales" AS "s"
+          WHERE "c"."Id" = "s"."CustomerId" AND CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1)
+      ORDER BY "c"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__threshold_0='?' (DbType = Decimal), @__threshold_0_1='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."TotalSpentCurrentMonth", "c"."QrCodeToken", 1 AS "eligible", @__threshold_0 AS "threshold"
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."TotalSpentCurrentMonth", @__threshold_0_1) >= 0
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "s0"."Id", "s0"."CashSessionId", "s0"."CreatedAt", "s0"."CustomerId", "s0"."DiscountAmount", "s0"."PaidAmount", "s0"."RemainingAmount", "s0"."SaleDate", "s0"."SaleNumber", "s0"."SaleStatus", "s0"."SubtotalAmount", "s0"."TotalAmount", "s0"."UpdatedAt", "s0"."UserId"
+      FROM "Customers" AS "c"
+      LEFT JOIN "Sales" AS "s0" ON "c"."Id" = "s0"."CustomerId"
+      WHERE EXISTS (
+          SELECT 1
+          FROM "Sales" AS "s"
+          WHERE "c"."Id" = "s"."CustomerId" AND CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1)
+      ORDER BY "c"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."ProductVariantId", "p0"."ProductName" AS "productName", "p0"."Reference" AS "reference", "p"."Barcode" AS "barcode", (
+          SELECT "p1"."ImagePath"
+          FROM "ProductImages" AS "p1"
+          WHERE "p0"."Id" = "p1"."ProductId"
+          ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+          LIMIT 1) AS "imageUrl", "s"."Quantity", "s"."UnitPurchasePrice", ef_multiply("s"."UnitPurchasePrice", CAST("s"."Quantity" AS decimal(18,2))) AS "totalAmount", "s"."PurchaseDate", "s"."Notes"
+      FROM "StockPurchases" AS "s"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      ORDER BY "s"."PurchaseDate" DESC, "s"."Id" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id" AS "productVariantId", "p0"."ProductName" AS "productName", "p0"."Reference" AS "reference", "p"."Barcode", (
+          SELECT "p1"."ImagePath"
+          FROM "ProductImages" AS "p1"
+          WHERE "p0"."Id" = "p1"."ProductId"
+          ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+          LIMIT 1) AS "imageUrl", "p"."CurrentStock" AS "quantity"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "p"."IsActive" AND "p0"."IsActive"
+      ORDER BY "p0"."ProductName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."ProductVariantId", "s"."Quantity", "s"."UnitPurchasePrice", "s"."PurchaseDate", "s"."Id"
+      FROM "StockPurchases" AS "s"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."ProductVariantId", "p0"."ProductName" AS "productName", "p0"."Reference" AS "reference", "p"."Barcode" AS "barcode", (
+          SELECT "p1"."ImagePath"
+          FROM "ProductImages" AS "p1"
+          WHERE "p0"."Id" = "p1"."ProductId"
+          ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+          LIMIT 1) AS "imageUrl", "s"."Quantity", "s"."UnitPurchasePrice", ef_multiply("s"."UnitPurchasePrice", CAST("s"."Quantity" AS decimal(18,2))) AS "totalAmount", "s"."PurchaseDate", "s"."Notes"
+      FROM "StockPurchases" AS "s"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      ORDER BY "s"."PurchaseDate" DESC, "s"."Id" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id" AS "productVariantId", "p0"."ProductName" AS "productName", "p0"."Reference" AS "reference", "p"."Barcode", (
+          SELECT "p1"."ImagePath"
+          FROM "ProductImages" AS "p1"
+          WHERE "p0"."Id" = "p1"."ProductId"
+          ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+          LIMIT 1) AS "imageUrl", "p"."CurrentStock" AS "quantity"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "p"."IsActive" AND "p0"."IsActive"
+      ORDER BY "p0"."ProductName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."ProductVariantId", "s"."Quantity", "s"."UnitPurchasePrice", "s"."PurchaseDate", "s"."Id"
+      FROM "StockPurchases" AS "s"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+warn: Microsoft.EntityFrameworkCore.Query[20504]
+      Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__year_Value_0='?' (DbType = Int32), @__month_Value_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "u"."FullName", "c"."Id" IS NULL, "c"."FirstName", "c"."LastName", "s"."TotalAmount", "s"."PaidAmount", "s"."RemainingAmount", "s"."SaleStatus", "u"."Id", "c"."Id", "t"."productName", "t"."imageUrl", "t"."Quantity", "t"."UnitPrice", "t"."LineTotal", "t"."Id", "t"."Id0", "t"."Id1", "s1"."PaymentMethod", "s1"."Amount", "s1"."Id"
+      FROM "Sales" AS "s"
+      INNER JOIN "Users" AS "u" ON "s"."UserId" = "u"."Id"
+      LEFT JOIN "Customers" AS "c" ON "s"."CustomerId" = "c"."Id"
+      LEFT JOIN (
+          SELECT "p0"."ProductName" AS "productName", (
+              SELECT "p1"."ImagePath"
+              FROM "ProductImages" AS "p1"
+              WHERE "p0"."Id" = "p1"."ProductId"
+              ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+              LIMIT 1) AS "imageUrl", "s0"."Quantity", "s0"."UnitPrice", "s0"."LineTotal", "s0"."Id", "p"."Id" AS "Id0", "p0"."Id" AS "Id1", "s0"."SaleId"
+          FROM "SaleLines" AS "s0"
+          INNER JOIN "ProductVariants" AS "p" ON "s0"."ProductVariantId" = "p"."Id"
+          INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      ) AS "t" ON "s"."Id" = "t"."SaleId"
+      LEFT JOIN "SalePayments" AS "s1" ON "s"."Id" = "s1"."SaleId"
+      WHERE CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_Value_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_Value_1
+      ORDER BY "s"."SaleDate" DESC, "s"."Id", "u"."Id", "c"."Id", "t"."Id", "t"."Id0", "t"."Id1"
+warn: Microsoft.EntityFrameworkCore.Query[20504]
+      Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."CashSessionId", "s"."CreatedAt", "s"."CustomerId", "s"."DiscountAmount", "s"."PaidAmount", "s"."RemainingAmount", "s"."SaleDate", "s"."SaleNumber", "s"."SaleStatus", "s"."SubtotalAmount", "s"."TotalAmount", "s"."UpdatedAt", "s"."UserId", "u"."Id", "u"."CreatedAt", "u"."Email", "u"."FullName", "u"."IsActive", "u"."PasswordHash", "u"."Phone", "u"."RoleId", "u"."UpdatedAt", "u"."Username", "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "t"."Id", "t"."CreatedAt", "t"."DiscountAmount", "t"."LineTotal", "t"."ProductVariantId", "t"."Quantity", "t"."SaleId", "t"."UnitPrice", "t"."UpdatedAt", "t"."Id0", "t"."Barcode", "t"."Color", "t"."CreatedAt0", "t"."CurrentStock", "t"."IsActive", "t"."IsReservable", "t"."MinStock", "t"."ProductId", "t"."PurchasePrice", "t"."SKU", "t"."SalePrice", "t"."Size", "t"."UpdatedAt0", "t"."Id1", "t"."BrandId", "t"."CategoryId", "t"."CreatedAt1", "t"."Description", "t"."IsActive0", "t"."ProductName", "t"."Reference", "t"."UpdatedAt1", "t"."Id2", "t"."CreatedAt2", "t"."ImagePath", "t"."IsPrimary", "t"."ProductId0", "t"."ProductVariantId0", "t"."UpdatedAt2", "s1"."Id", "s1"."Amount", "s1"."CreatedAt", "s1"."PaymentMethod", "s1"."SaleId", "s1"."UpdatedAt"
+      FROM "Sales" AS "s"
+      INNER JOIN "Users" AS "u" ON "s"."UserId" = "u"."Id"
+      LEFT JOIN "Customers" AS "c" ON "s"."CustomerId" = "c"."Id"
+      LEFT JOIN (
+          SELECT "s0"."Id", "s0"."CreatedAt", "s0"."DiscountAmount", "s0"."LineTotal", "s0"."ProductVariantId", "s0"."Quantity", "s0"."SaleId", "s0"."UnitPrice", "s0"."UpdatedAt", "p"."Id" AS "Id0", "p"."Barcode", "p"."Color", "p"."CreatedAt" AS "CreatedAt0", "p"."CurrentStock", "p"."IsActive", "p"."IsReservable", "p"."MinStock", "p"."ProductId", "p"."PurchasePrice", "p"."SKU", "p"."SalePrice", "p"."Size", "p"."UpdatedAt" AS "UpdatedAt0", "p0"."Id" AS "Id1", "p0"."BrandId", "p0"."CategoryId", "p0"."CreatedAt" AS "CreatedAt1", "p0"."Description", "p0"."IsActive" AS "IsActive0", "p0"."ProductName", "p0"."Reference", "p0"."UpdatedAt" AS "UpdatedAt1", "p1"."Id" AS "Id2", "p1"."CreatedAt" AS "CreatedAt2", "p1"."ImagePath", "p1"."IsPrimary", "p1"."ProductId" AS "ProductId0", "p1"."ProductVariantId" AS "ProductVariantId0", "p1"."UpdatedAt" AS "UpdatedAt2"
+          FROM "SaleLines" AS "s0"
+          INNER JOIN "ProductVariants" AS "p" ON "s0"."ProductVariantId" = "p"."Id"
+          INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+          LEFT JOIN "ProductImages" AS "p1" ON "p0"."Id" = "p1"."ProductId"
+      ) AS "t" ON "s"."Id" = "t"."SaleId"
+      LEFT JOIN "SalePayments" AS "s1" ON "s"."Id" = "s1"."SaleId"
+      WHERE CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1
+      ORDER BY "s"."SaleDate" DESC, "s"."Id", "u"."Id", "c"."Id", "t"."Id", "t"."Id0", "t"."Id1", "t"."Id2"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."CreatedAt", "e"."IsActive", "e"."Name", "e"."UpdatedAt"
+      FROM "ExpenseCategories" AS "e"
+      ORDER BY "e"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."ExpenseDate", "e"."Amount", "e"."PaymentMethod", "e"."SupplierName", "e"."Description", "e"."Remark", "e"."ReceiptImagePath" AS "receiptImageUrl", "e0"."Name" AS "category"
+      FROM "Expenses" AS "e"
+      INNER JOIN "ExpenseCategories" AS "e0" ON "e"."ExpenseCategoryId" = "e0"."Id"
+      WHERE CAST(strftime('%Y', "e"."ExpenseDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "e"."ExpenseDate") AS INTEGER) = @__month_1
+      ORDER BY "e"."ExpenseDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_Value_0='?' (DbType = Int32), @__month_Value_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."ExpenseDate", "e"."Amount", "e"."PaymentMethod", "e"."SupplierName", "e"."Description", "e"."Remark", "e"."ReceiptImagePath" AS "receiptImageUrl", "e0"."Name" AS "category"
+      FROM "Expenses" AS "e"
+      INNER JOIN "ExpenseCategories" AS "e0" ON "e"."ExpenseCategoryId" = "e0"."Id"
+      WHERE CAST(strftime('%Y', "e"."ExpenseDate") AS INTEGER) = @__year_Value_0 AND CAST(strftime('%m', "e"."ExpenseDate") AS INTEGER) = @__month_Value_1
+      ORDER BY "e"."ExpenseDate" DESC
+warn: Microsoft.EntityFrameworkCore.Query[20504]
+      Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."Email", "c"."City", "c"."QrCodeToken", "c"."VipStatus", "c"."TotalSpentLifetime", "c"."TotalSpentCurrentMonth", "c"."CurrentCreditAmount", "l"."Id" IS NULL, "l"."PointsBalance", "l"."TierLevel", "l"."Id", "v"."Id", "v"."Code", "v"."Value", "v"."Status", "v"."MinPurchaseAmount", "v"."ExpiresAt", "t0"."Id", "t0"."SaleNumber", "t0"."SaleDate", "t0"."TotalAmount"
+      FROM "Customers" AS "c"
+      LEFT JOIN "LoyaltyAccounts" AS "l" ON "c"."Id" = "l"."CustomerId"
+      LEFT JOIN "Vouchers" AS "v" ON "c"."Id" = "v"."CustomerId"
+      LEFT JOIN (
+          SELECT "t"."Id", "t"."SaleNumber", "t"."SaleDate", "t"."TotalAmount", "t"."CustomerId"
+          FROM (
+              SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "s"."TotalAmount", "s"."CustomerId", ROW_NUMBER() OVER(PARTITION BY "s"."CustomerId" ORDER BY "s"."SaleDate" DESC) AS "row"
+              FROM "Sales" AS "s"
+          ) AS "t"
+          WHERE "t"."row" <= 5
+      ) AS "t0" ON "c"."Id" = "t0"."CustomerId"
+      ORDER BY "c"."CreatedAt" DESC, "c"."Id", "l"."Id", "v"."Id", "t0"."CustomerId", "t0"."SaleDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."Email", "c"."City", "c"."QrCodeToken", "c"."VipStatus", "c"."TotalSpentLifetime", "c"."TotalSpentCurrentMonth", "c"."CurrentCreditAmount", "l"."Id" IS NULL, "l"."PointsBalance", "l"."TierLevel", "l"."Id", "v"."Id", "v"."Code", "v"."Value", "v"."Status", "v"."MinPurchaseAmount", "v"."ExpiresAt", "t0"."Id", "t0"."SaleNumber", "t0"."SaleDate", "t0"."TotalAmount"
+      FROM "Customers" AS "c"
+      LEFT JOIN "LoyaltyAccounts" AS "l" ON "c"."Id" = "l"."CustomerId"
+      LEFT JOIN "Vouchers" AS "v" ON "c"."Id" = "v"."CustomerId"
+      LEFT JOIN (
+          SELECT "t"."Id", "t"."SaleNumber", "t"."SaleDate", "t"."TotalAmount", "t"."CustomerId"
+          FROM (
+              SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "s"."TotalAmount", "s"."CustomerId", ROW_NUMBER() OVER(PARTITION BY "s"."CustomerId" ORDER BY "s"."SaleDate" DESC) AS "row"
+              FROM "Sales" AS "s"
+          ) AS "t"
+          WHERE "t"."row" <= 5
+      ) AS "t0" ON "c"."Id" = "t0"."CustomerId"
+      ORDER BY "c"."CreatedAt" DESC, "c"."Id", "l"."Id", "v"."Id", "t0"."CustomerId", "t0"."SaleDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_Value_0='?' (DbType = Int32), @__month_Value_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."ExpenseDate", "e"."Amount", "e"."PaymentMethod", "e"."SupplierName", "e"."Description", "e"."Remark", "e"."ReceiptImagePath" AS "receiptImageUrl", "e0"."Name" AS "category"
+      FROM "Expenses" AS "e"
+      INNER JOIN "ExpenseCategories" AS "e0" ON "e"."ExpenseCategoryId" = "e0"."Id"
+      WHERE CAST(strftime('%Y', "e"."ExpenseDate") AS INTEGER) = @__year_Value_0 AND CAST(strftime('%m', "e"."ExpenseDate") AS INTEGER) = @__month_Value_1
+      ORDER BY "e"."ExpenseDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."CreatedAt", "e"."IsActive", "e"."Name", "e"."UpdatedAt"
+      FROM "ExpenseCategories" AS "e"
+      ORDER BY "e"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."ExpenseDate", "e"."Amount", "e"."PaymentMethod", "e"."SupplierName", "e"."Description", "e"."Remark", "e"."ReceiptImagePath" AS "receiptImageUrl", "e0"."Name" AS "category"
+      FROM "Expenses" AS "e"
+      INNER JOIN "ExpenseCategories" AS "e0" ON "e"."ExpenseCategoryId" = "e0"."Id"
+      WHERE CAST(strftime('%Y', "e"."ExpenseDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "e"."ExpenseDate") AS INTEGER) = @__month_1
+      ORDER BY "e"."ExpenseDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."CreatedAt", "e"."IsActive", "e"."Name", "e"."UpdatedAt"
+      FROM "ExpenseCategories" AS "e"
+      ORDER BY "e"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_Value_0='?' (DbType = Int32), @__month_Value_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."ExpenseDate", "e"."Amount", "e"."PaymentMethod", "e"."SupplierName", "e"."Description", "e"."Remark", "e"."ReceiptImagePath" AS "receiptImageUrl", "e0"."Name" AS "category"
+      FROM "Expenses" AS "e"
+      INNER JOIN "ExpenseCategories" AS "e0" ON "e"."ExpenseCategoryId" = "e0"."Id"
+      WHERE CAST(strftime('%Y', "e"."ExpenseDate") AS INTEGER) = @__year_Value_0 AND CAST(strftime('%m', "e"."ExpenseDate") AS INTEGER) = @__month_Value_1
+      ORDER BY "e"."ExpenseDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Id", "e"."ExpenseDate", "e"."Amount", "e"."PaymentMethod", "e"."SupplierName", "e"."Description", "e"."Remark", "e"."ReceiptImagePath" AS "receiptImageUrl", "e0"."Name" AS "category"
+      FROM "Expenses" AS "e"
+      INNER JOIN "ExpenseCategories" AS "e0" ON "e"."ExpenseCategoryId" = "e0"."Id"
+      WHERE CAST(strftime('%Y', "e"."ExpenseDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "e"."ExpenseDate") AS INTEGER) = @__month_1
+      ORDER BY "e"."ExpenseDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."CreatedAt", "c"."Description", "c"."IsActive", "c"."Name", "c"."UpdatedAt"
+      FROM "Categories" AS "c"
+      ORDER BY "c"."Name"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."CashSessionId", "s"."CreatedAt", "s"."CustomerId", "s"."DiscountAmount", "s"."PaidAmount", "s"."RemainingAmount", "s"."SaleDate", "s"."SaleNumber", "s"."SaleStatus", "s"."SubtotalAmount", "s"."TotalAmount", "s"."UpdatedAt", "s"."UserId", "u"."Id", "u"."CreatedAt", "u"."Email", "u"."FullName", "u"."IsActive", "u"."PasswordHash", "u"."Phone", "u"."RoleId", "u"."UpdatedAt", "u"."Username", "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "t"."Id", "t"."CreatedAt", "t"."DiscountAmount", "t"."LineTotal", "t"."ProductVariantId", "t"."Quantity", "t"."SaleId", "t"."UnitPrice", "t"."UpdatedAt", "t"."Id0", "t"."Barcode", "t"."Color", "t"."CreatedAt0", "t"."CurrentStock", "t"."IsActive", "t"."IsReservable", "t"."MinStock", "t"."ProductId", "t"."PurchasePrice", "t"."SKU", "t"."SalePrice", "t"."Size", "t"."UpdatedAt0", "t"."Id1", "t"."BrandId", "t"."CategoryId", "t"."CreatedAt1", "t"."Description", "t"."IsActive0", "t"."ProductName", "t"."Reference", "t"."UpdatedAt1", "t"."Id2", "t"."CreatedAt2", "t"."ImagePath", "t"."IsPrimary", "t"."ProductId0", "t"."ProductVariantId0", "t"."UpdatedAt2", "s1"."Id", "s1"."Amount", "s1"."CreatedAt", "s1"."PaymentMethod", "s1"."SaleId", "s1"."UpdatedAt"
+      FROM "Sales" AS "s"
+      INNER JOIN "Users" AS "u" ON "s"."UserId" = "u"."Id"
+      LEFT JOIN "Customers" AS "c" ON "s"."CustomerId" = "c"."Id"
+      LEFT JOIN (
+          SELECT "s0"."Id", "s0"."CreatedAt", "s0"."DiscountAmount", "s0"."LineTotal", "s0"."ProductVariantId", "s0"."Quantity", "s0"."SaleId", "s0"."UnitPrice", "s0"."UpdatedAt", "p"."Id" AS "Id0", "p"."Barcode", "p"."Color", "p"."CreatedAt" AS "CreatedAt0", "p"."CurrentStock", "p"."IsActive", "p"."IsReservable", "p"."MinStock", "p"."ProductId", "p"."PurchasePrice", "p"."SKU", "p"."SalePrice", "p"."Size", "p"."UpdatedAt" AS "UpdatedAt0", "p0"."Id" AS "Id1", "p0"."BrandId", "p0"."CategoryId", "p0"."CreatedAt" AS "CreatedAt1", "p0"."Description", "p0"."IsActive" AS "IsActive0", "p0"."ProductName", "p0"."Reference", "p0"."UpdatedAt" AS "UpdatedAt1", "p1"."Id" AS "Id2", "p1"."CreatedAt" AS "CreatedAt2", "p1"."ImagePath", "p1"."IsPrimary", "p1"."ProductId" AS "ProductId0", "p1"."ProductVariantId" AS "ProductVariantId0", "p1"."UpdatedAt" AS "UpdatedAt2"
+          FROM "SaleLines" AS "s0"
+          INNER JOIN "ProductVariants" AS "p" ON "s0"."ProductVariantId" = "p"."Id"
+          INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+          LEFT JOIN "ProductImages" AS "p1" ON "p0"."Id" = "p1"."ProductId"
+      ) AS "t" ON "s"."Id" = "t"."SaleId"
+      LEFT JOIN "SalePayments" AS "s1" ON "s"."Id" = "s1"."SaleId"
+      WHERE CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1
+      ORDER BY "s"."SaleDate" DESC, "s"."Id", "u"."Id", "c"."Id", "t"."Id", "t"."Id0", "t"."Id1", "t"."Id2"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__year_Value_0='?' (DbType = Int32), @__month_Value_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "u"."FullName", "c"."Id" IS NULL, "c"."FirstName", "c"."LastName", "s"."TotalAmount", "s"."PaidAmount", "s"."RemainingAmount", "s"."SaleStatus", "u"."Id", "c"."Id", "t"."productName", "t"."imageUrl", "t"."Quantity", "t"."UnitPrice", "t"."LineTotal", "t"."Id", "t"."Id0", "t"."Id1", "s1"."PaymentMethod", "s1"."Amount", "s1"."Id"
+      FROM "Sales" AS "s"
+      INNER JOIN "Users" AS "u" ON "s"."UserId" = "u"."Id"
+      LEFT JOIN "Customers" AS "c" ON "s"."CustomerId" = "c"."Id"
+      LEFT JOIN (
+          SELECT "p0"."ProductName" AS "productName", (
+              SELECT "p1"."ImagePath"
+              FROM "ProductImages" AS "p1"
+              WHERE "p0"."Id" = "p1"."ProductId"
+              ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+              LIMIT 1) AS "imageUrl", "s0"."Quantity", "s0"."UnitPrice", "s0"."LineTotal", "s0"."Id", "p"."Id" AS "Id0", "p0"."Id" AS "Id1", "s0"."SaleId"
+          FROM "SaleLines" AS "s0"
+          INNER JOIN "ProductVariants" AS "p" ON "s0"."ProductVariantId" = "p"."Id"
+          INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      ) AS "t" ON "s"."Id" = "t"."SaleId"
+      LEFT JOIN "SalePayments" AS "s1" ON "s"."Id" = "s1"."SaleId"
+      WHERE CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_Value_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_Value_1
+      ORDER BY "s"."SaleDate" DESC, "s"."Id", "u"."Id", "c"."Id", "t"."Id", "t"."Id0", "t"."Id1"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."Email", "c"."City", "c"."QrCodeToken", "c"."VipStatus", "c"."TotalSpentLifetime", "c"."TotalSpentCurrentMonth", "c"."CurrentCreditAmount", "l"."Id" IS NULL, "l"."PointsBalance", "l"."TierLevel", "l"."Id", "v"."Id", "v"."Code", "v"."Value", "v"."Status", "v"."MinPurchaseAmount", "v"."ExpiresAt", "t0"."Id", "t0"."SaleNumber", "t0"."SaleDate", "t0"."TotalAmount"
+      FROM "Customers" AS "c"
+      LEFT JOIN "LoyaltyAccounts" AS "l" ON "c"."Id" = "l"."CustomerId"
+      LEFT JOIN "Vouchers" AS "v" ON "c"."Id" = "v"."CustomerId"
+      LEFT JOIN (
+          SELECT "t"."Id", "t"."SaleNumber", "t"."SaleDate", "t"."TotalAmount", "t"."CustomerId"
+          FROM (
+              SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "s"."TotalAmount", "s"."CustomerId", ROW_NUMBER() OVER(PARTITION BY "s"."CustomerId" ORDER BY "s"."SaleDate" DESC) AS "row"
+              FROM "Sales" AS "s"
+          ) AS "t"
+          WHERE "t"."row" <= 5
+      ) AS "t0" ON "c"."Id" = "t0"."CustomerId"
+      ORDER BY "c"."CreatedAt" DESC, "c"."Id", "l"."Id", "v"."Id", "t0"."CustomerId", "t0"."SaleDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__year_Value_0='?' (DbType = Int32), @__month_Value_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "u"."FullName", "c"."Id" IS NULL, "c"."FirstName", "c"."LastName", "s"."TotalAmount", "s"."PaidAmount", "s"."RemainingAmount", "s"."SaleStatus", "u"."Id", "c"."Id", "t"."productName", "t"."imageUrl", "t"."Quantity", "t"."UnitPrice", "t"."LineTotal", "t"."Id", "t"."Id0", "t"."Id1", "s1"."PaymentMethod", "s1"."Amount", "s1"."Id"
+      FROM "Sales" AS "s"
+      INNER JOIN "Users" AS "u" ON "s"."UserId" = "u"."Id"
+      LEFT JOIN "Customers" AS "c" ON "s"."CustomerId" = "c"."Id"
+      LEFT JOIN (
+          SELECT "p0"."ProductName" AS "productName", (
+              SELECT "p1"."ImagePath"
+              FROM "ProductImages" AS "p1"
+              WHERE "p0"."Id" = "p1"."ProductId"
+              ORDER BY "p1"."IsPrimary" DESC, "p1"."Id"
+              LIMIT 1) AS "imageUrl", "s0"."Quantity", "s0"."UnitPrice", "s0"."LineTotal", "s0"."Id", "p"."Id" AS "Id0", "p0"."Id" AS "Id1", "s0"."SaleId"
+          FROM "SaleLines" AS "s0"
+          INNER JOIN "ProductVariants" AS "p" ON "s0"."ProductVariantId" = "p"."Id"
+          INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      ) AS "t" ON "s"."Id" = "t"."SaleId"
+      LEFT JOIN "SalePayments" AS "s1" ON "s"."Id" = "s1"."SaleId"
+      WHERE CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_Value_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_Value_1
+      ORDER BY "s"."SaleDate" DESC, "s"."Id", "u"."Id", "c"."Id", "t"."Id", "t"."Id0", "t"."Id1"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__year_0='?' (DbType = Int32), @__month_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."CashSessionId", "s"."CreatedAt", "s"."CustomerId", "s"."DiscountAmount", "s"."PaidAmount", "s"."RemainingAmount", "s"."SaleDate", "s"."SaleNumber", "s"."SaleStatus", "s"."SubtotalAmount", "s"."TotalAmount", "s"."UpdatedAt", "s"."UserId", "u"."Id", "u"."CreatedAt", "u"."Email", "u"."FullName", "u"."IsActive", "u"."PasswordHash", "u"."Phone", "u"."RoleId", "u"."UpdatedAt", "u"."Username", "c"."Id", "c"."City", "c"."CreatedAt", "c"."CurrentCreditAmount", "c"."Email", "c"."FirstName", "c"."IsWhatsAppOptIn", "c"."LastName", "c"."Phone", "c"."QrCodeToken", "c"."TotalSpentCurrentMonth", "c"."TotalSpentLifetime", "c"."UpdatedAt", "c"."VipStatus", "t"."Id", "t"."CreatedAt", "t"."DiscountAmount", "t"."LineTotal", "t"."ProductVariantId", "t"."Quantity", "t"."SaleId", "t"."UnitPrice", "t"."UpdatedAt", "t"."Id0", "t"."Barcode", "t"."Color", "t"."CreatedAt0", "t"."CurrentStock", "t"."IsActive", "t"."IsReservable", "t"."MinStock", "t"."ProductId", "t"."PurchasePrice", "t"."SKU", "t"."SalePrice", "t"."Size", "t"."UpdatedAt0", "t"."Id1", "t"."BrandId", "t"."CategoryId", "t"."CreatedAt1", "t"."Description", "t"."IsActive0", "t"."ProductName", "t"."Reference", "t"."UpdatedAt1", "t"."Id2", "t"."CreatedAt2", "t"."ImagePath", "t"."IsPrimary", "t"."ProductId0", "t"."ProductVariantId0", "t"."UpdatedAt2", "s1"."Id", "s1"."Amount", "s1"."CreatedAt", "s1"."PaymentMethod", "s1"."SaleId", "s1"."UpdatedAt"
+      FROM "Sales" AS "s"
+      INNER JOIN "Users" AS "u" ON "s"."UserId" = "u"."Id"
+      LEFT JOIN "Customers" AS "c" ON "s"."CustomerId" = "c"."Id"
+      LEFT JOIN (
+          SELECT "s0"."Id", "s0"."CreatedAt", "s0"."DiscountAmount", "s0"."LineTotal", "s0"."ProductVariantId", "s0"."Quantity", "s0"."SaleId", "s0"."UnitPrice", "s0"."UpdatedAt", "p"."Id" AS "Id0", "p"."Barcode", "p"."Color", "p"."CreatedAt" AS "CreatedAt0", "p"."CurrentStock", "p"."IsActive", "p"."IsReservable", "p"."MinStock", "p"."ProductId", "p"."PurchasePrice", "p"."SKU", "p"."SalePrice", "p"."Size", "p"."UpdatedAt" AS "UpdatedAt0", "p0"."Id" AS "Id1", "p0"."BrandId", "p0"."CategoryId", "p0"."CreatedAt" AS "CreatedAt1", "p0"."Description", "p0"."IsActive" AS "IsActive0", "p0"."ProductName", "p0"."Reference", "p0"."UpdatedAt" AS "UpdatedAt1", "p1"."Id" AS "Id2", "p1"."CreatedAt" AS "CreatedAt2", "p1"."ImagePath", "p1"."IsPrimary", "p1"."ProductId" AS "ProductId0", "p1"."ProductVariantId" AS "ProductVariantId0", "p1"."UpdatedAt" AS "UpdatedAt2"
+          FROM "SaleLines" AS "s0"
+          INNER JOIN "ProductVariants" AS "p" ON "s0"."ProductVariantId" = "p"."Id"
+          INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+          LEFT JOIN "ProductImages" AS "p1" ON "p0"."Id" = "p1"."ProductId"
+      ) AS "t" ON "s"."Id" = "t"."SaleId"
+      LEFT JOIN "SalePayments" AS "s1" ON "s"."Id" = "s1"."SaleId"
+      WHERE CAST(strftime('%Y', "s"."SaleDate") AS INTEGER) = @__year_0 AND CAST(strftime('%m', "s"."SaleDate") AS INTEGER) = @__month_1
+      ORDER BY "s"."SaleDate" DESC, "s"."Id", "u"."Id", "c"."Id", "t"."Id", "t"."Id0", "t"."Id1", "t"."Id2"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfWeek_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__startOfWeek_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."TotalAmount"
+      FROM "Sales" AS "s"
+      WHERE "s"."SaleDate" >= @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfYear_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfYear_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__selectedStart_0='?' (DbType = DateTime), @__selectedEnd_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."FullName" AS "employee", "s0"."UserId", "p0"."ProductName" AS "productName", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "Users" AS "u" ON "s0"."UserId" = "u"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+      WHERE "s0"."SaleDate" >= @__selectedStart_0 AND "s0"."SaleDate" < @__selectedEnd_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__start_0='?' (DbType = DateTime), @__end_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "e"."Amount"
+      FROM "Expenses" AS "e"
+      WHERE "e"."ExpenseDate" >= @__start_0 AND "e"."ExpenseDate" < @__end_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "p"."CurrentStock", "p"."PurchasePrice", "p"."SalePrice"
+      FROM "ProductVariants" AS "p"
+      INNER JOIN "Products" AS "p0" ON "p"."ProductId" = "p0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "p0"."ProductName" AS "productName", "t"."Barcode", "t"."CurrentStock", "t"."MinStock"
+      FROM (
+          SELECT "p"."Barcode", "p"."CurrentStock", "p"."MinStock", "p"."ProductId"
+          FROM "ProductVariants" AS "p"
+          WHERE "p"."CurrentStock" <= "p"."MinStock"
+          ORDER BY "p"."CurrentStock"
+          LIMIT @__p_0
+      ) AS "t"
+      INNER JOIN "Products" AS "p0" ON "t"."ProductId" = "p0"."Id"
+      ORDER BY "t"."CurrentStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."FirstName" || ' ' || "c"."LastName" AS "name", "c"."TotalSpentCurrentMonth"
+      FROM "Customers" AS "c"
+      ORDER BY CAST("c"."TotalSpentCurrentMonth" AS REAL) DESC
+      LIMIT @__p_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE "c"."VipStatus"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ProductVariants" AS "p"
+      WHERE "p"."CurrentStock" <= "p"."MinStock"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__today_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Reservations" AS "r"
+      WHERE "r"."Status" = 'RESERVED' AND "r"."DueDate" <= @__today_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "Customers" AS "c"
+      WHERE ef_compare("c"."CurrentCreditAmount", '300.0') > 0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."Email", "c"."City", "c"."QrCodeToken", "c"."VipStatus", "c"."TotalSpentLifetime", "c"."TotalSpentCurrentMonth", "c"."CurrentCreditAmount", "l"."Id" IS NULL, "l"."PointsBalance", "l"."TierLevel", "l"."Id", "v"."Id", "v"."Code", "v"."Value", "v"."Status", "v"."MinPurchaseAmount", "v"."ExpiresAt", "t0"."Id", "t0"."SaleNumber", "t0"."SaleDate", "t0"."TotalAmount"
+      FROM "Customers" AS "c"
+      LEFT JOIN "LoyaltyAccounts" AS "l" ON "c"."Id" = "l"."CustomerId"
+      LEFT JOIN "Vouchers" AS "v" ON "c"."Id" = "v"."CustomerId"
+      LEFT JOIN (
+          SELECT "t"."Id", "t"."SaleNumber", "t"."SaleDate", "t"."TotalAmount", "t"."CustomerId"
+          FROM (
+              SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "s"."TotalAmount", "s"."CustomerId", ROW_NUMBER() OVER(PARTITION BY "s"."CustomerId" ORDER BY "s"."SaleDate" DESC) AS "row"
+              FROM "Sales" AS "s"
+          ) AS "t"
+          WHERE "t"."row" <= 5
+      ) AS "t0" ON "c"."Id" = "t0"."CustomerId"
+      ORDER BY "c"."CreatedAt" DESC, "c"."Id", "l"."Id", "v"."Id", "t0"."CustomerId", "t0"."SaleDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "s"."Id", "s"."Address", "s"."BackgroundColor", "s"."CreatedAt", "s"."CurrencyCode", "s"."EmployeeMaxDiscountPercent", "s"."LogoPath", "s"."MonthlyGiftPrize", "s"."MonthlyGiftReminderMessage", "s"."Phone", "s"."PrimaryColor", "s"."ReceiptFooterMessage", "s"."ReservationReminderDaysDefault", "s"."SecondaryColor", "s"."StoreName", "s"."TextColor", "s"."UpdatedAt", "s"."WhatsAppNumber", "s"."WheelEligibilityAmount", "s"."WheelPrizes"
+      FROM "StoreSettings" AS "s"
+      ORDER BY "s"."Id"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startOfMonth_0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "s0"."SaleDate", "s"."Quantity", "s"."LineTotal", "p"."PurchasePrice"
+      FROM "SaleLines" AS "s"
+      INNER JOIN "Sales" AS "s0" ON "s"."SaleId" = "s0"."Id"
+      INNER JOIN "ProductVariants" AS "p" ON "s"."ProductVariantId" = "p"."Id"
+      WHERE "s0"."SaleDate" >= @__startOfMonth_0
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "c"."Id", "c"."FirstName", "c"."LastName", "c"."Phone", "c"."Email", "c"."City", "c"."QrCodeToken", "c"."VipStatus", "c"."TotalSpentLifetime", "c"."TotalSpentCurrentMonth", "c"."CurrentCreditAmount", "l"."Id" IS NULL, "l"."PointsBalance", "l"."TierLevel", "l"."Id", "v"."Id", "v"."Code", "v"."Value", "v"."Status", "v"."MinPurchaseAmount", "v"."ExpiresAt", "t0"."Id", "t0"."SaleNumber", "t0"."SaleDate", "t0"."TotalAmount"
+      FROM "Customers" AS "c"
+      LEFT JOIN "LoyaltyAccounts" AS "l" ON "c"."Id" = "l"."CustomerId"
+      LEFT JOIN "Vouchers" AS "v" ON "c"."Id" = "v"."CustomerId"
+      LEFT JOIN (
+          SELECT "t"."Id", "t"."SaleNumber", "t"."SaleDate", "t"."TotalAmount", "t"."CustomerId"
+          FROM (
+              SELECT "s"."Id", "s"."SaleNumber", "s"."SaleDate", "s"."TotalAmount", "s"."CustomerId", ROW_NUMBER() OVER(PARTITION BY "s"."CustomerId" ORDER BY "s"."SaleDate" DESC) AS "row"
+              FROM "Sales" AS "s"
+          ) AS "t"
+          WHERE "t"."row" <= 5
+      ) AS "t0" ON "c"."Id" = "t0"."CustomerId"
+      ORDER BY "c"."CreatedAt" DESC, "c"."Id", "l"."Id", "v"."Id", "t0"."CustomerId", "t0"."SaleDate" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "p"."Id", "p"."ProductName", "p"."Reference", "p"."CategoryId", "p"."BrandId", "c"."Name", "b"."Name", (
+          SELECT "p0"."ImagePath"
+          FROM "ProductImages" AS "p0"
+          WHERE "p"."Id" = "p0"."ProductId"
+          ORDER BY "p0"."IsPrimary" DESC, "p0"."Id"
+          LIMIT 1), "c"."Id", "b"."Id", "t"."Id", "t"."SKU", "t"."Barcode", "t"."Color", "t"."Size", "t"."PurchasePrice", "t"."SalePrice", "t"."CurrentStock", "t"."MinStock"
+      FROM "Products" AS "p"
+      INNER JOIN "Categories" AS "c" ON "p"."CategoryId" = "c"."Id"
+      LEFT JOIN "Brands" AS "b" ON "p"."BrandId" = "b"."Id"
+      LEFT JOIN (
+          SELECT "p1"."Id", "p1"."SKU", "p1"."Barcode", "p1"."Color", "p1"."Size", "p1"."PurchasePrice", "p1"."SalePrice", "p1"."CurrentStock", "p1"."MinStock", "p1"."ProductId"
+          FROM "ProductVariants" AS "p1"
+          WHERE "p1"."IsActive"
+      ) AS "t" ON "p"."Id" = "t"."ProductId"
+      WHERE "p"."IsActive"
+      ORDER BY "p"."CreatedAt" DESC, "p"."Id", "c"."Id", "b"."Id"
