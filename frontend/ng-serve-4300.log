@@ -174,3 +174,67 @@ styles.css          | styles | 18.57 kB |                 3.98 kB
 Application bundle generation complete. [2.321 seconds]
 
 HMR update sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 245.91 kB |                32.68 kB
+
+Application bundle generation complete. [9.324 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 245.96 kB |                32.67 kB
+
+Application bundle generation complete. [2.325 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 248.94 kB |                32.95 kB
+
+Application bundle generation complete. [3.209 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 249.01 kB |                32.94 kB
+
+Application bundle generation complete. [2.204 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 249.05 kB |                32.96 kB
+
+Application bundle generation complete. [2.649 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 249.28 kB |                33.02 kB
+
+Application bundle generation complete. [3.138 seconds]
+
+Page reload sent to client(s).
+
+No output file changes.
+
+Application bundle generation complete. [2.750 seconds]
+
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 250.45 kB |                33.13 kB
+
+Application bundle generation complete. [2.365 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 254.08 kB |                34.16 kB
+
+Application bundle generation complete. [2.801 seconds]
+
+Page reload sent to client(s).
+
+No output file changes.
+
+Application bundle generation complete. [1.533 seconds]
+
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 254.60 kB |                34.32 kB
+
+Application bundle generation complete. [1.977 seconds]
+
+Page reload sent to client(s).

@@ -1,0 +1,20 @@
+
+> tresor-boutique-frontend@1.0.0 start
+> ng serve --open --host 127.0.0.1 --port 4200 --no-open
+
+Initial chunk files | Names         |  Raw size | Estimated transfer size
+main.js             | main          | 254.08 kB |                34.16 kB
+styles.css          | styles        |  18.57 kB |                 3.98 kB
+
+                    | Initial total | 272.65 kB |                38.13 kB
+
+Application bundle generation complete. [6.655 seconds]
+
+Watch mode enabled. Watching for file changes...
+  ➜  Local:   http://127.0.0.1:4200/
+Initial chunk files | Names |  Raw size | Estimated transfer size
+main.js             | main  | 254.60 kB |                34.32 kB
+
+Application bundle generation complete. [2.542 seconds]
+
+Page reload sent to client(s).
