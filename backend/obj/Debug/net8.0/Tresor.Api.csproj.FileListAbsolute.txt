@@ -305,3 +305,11 @@ C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\backend\bin\Debug\net8.0\run
 C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\backend\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\backend\bin\Debug\net8.0\Tresor.Api.staticwebassets.runtime.json
 C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\backend\obj\Debug\net8.0\Tresor.Api.sourcelink.json
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\appsettings.json
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.staticwebassets.runtime.json
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.staticwebassets.endpoints.json
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.exe
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.deps.json
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.runtimeconfig.json
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.dll
+C:\Users\PC\Desktop\mes traivail\tresor-boutique-v2\.local\build\Tresor.Api.pdb

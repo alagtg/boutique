@@ -1,96 +1,49 @@
-# Trésor Boutique V2
+# Tresor Boutique
 
-Version V2 du starter Trésor Boutique :
-- thème **blanc + gold**
-- **POS desktop-first** pour utilisation avec **douchette code-barres**
-- **ventes ligne par ligne**
-- **vue facture mensuelle**
-- **dépenses ligne par ligne** avec remarque
-- **clients + fidélité + VIP + bons**
-- **QR client** pour inscription rapide
-- **réservations** avec rappel métier
-- **paramètres boutique**
+Application Angular et ASP.NET Core 8 pour la caisse et la gestion de boutique.
 
-## Important
-Cette version utilise `Database.EnsureCreated()` pour démarrer plus vite sans générer de migrations EF avant.
+## Deux bases SQL Server
 
-### Si tu avais déjà lancé une ancienne version
-Supprime d'abord l'ancienne base **TresorBoutiqueDb** puis lance la nouvelle V2.
+Le mode Commerce enregistre les ventes localement et les transmet automatiquement
+au mode BackOffice par API protegee, avec reprise hors ligne et protection contre
+les doublons. Les modeles et routes de l'application existante sont conserves.
 
----
+Voir [le guide de migration et de deploiement](docs/DEUX-BASES.md) pour la sauvegarde,
+les commandes EF, les variables d'environnement, les ports, le pare-feu et les tests.
+L'[inventaire des fichiers](docs/FICHIERS-DEUX-BASES.md) detaille la modification.
 
-## Backend .NET
-```bash
-cd backend
-dotnet restore
-dotnet run
+Ne jamais supprimer la base existante pour installer cette version.
+Ne pas appliquer une migration initiale sur une base deja peuplee : utiliser la
+procedure d'adoption avec sauvegarde decrite dans le guide.
+
+## Demarrage
+
+Configurer la connexion locale, le mode d'installation et `Jwt__Key` avant de lancer
+le backend. En mode Commerce/BackOffice, configurer aussi `BackOfficeApi__SyncKey`.
+Les comptes existants conservent leurs mots de passe ; aucun mot de passe n'est
+cree au demarrage normal. Les donnees de demonstration sont desormais explicites.
+
+```powershell
+dotnet run --project backend/Tresor.Api.csproj
 ```
 
-API :
-- `http://localhost:5000`
-- `https://localhost:7001`
-- Swagger : `https://localhost:7001/swagger`
+Dans le dossier frontend :
 
-### Connexion SQL Server
-Dans `backend/appsettings.json`, adapte `DefaultConnection`.
-
-Exemple :
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=DESKTOP-3TGJIKF\\SQL22;Database=TresorBoutiqueDb;User Id=sa;Password=ala;TrustServerCertificate=True;MultipleActiveResultSets=true"
-}
+```powershell
+npm ci
+npm start
 ```
 
----
+Interface : http://localhost:4200. API locale habituelle : http://localhost:5000.
+L'adresse de l'API de chaque poste se configure dans
+`frontend/src/assets/runtime-config.js`.
 
-## Frontend Angular
-```bash
-cd frontend
-npm install
-ng serve -o
+## Verification
+
+```powershell
+dotnet build tests/SyncSmoke/SyncSmoke.csproj --configuration Sync
+dotnet tests/SyncSmoke/bin/Sync/net8.0/SyncSmoke.dll .
 ```
 
-Application :
-- `http://localhost:4200`
-
----
-
-## Comptes seed
-- Admin : `admin / Admin@123`
-- Employé : `employe / Employe@123`
-
----
-
-## Routes principales
-- `/login`
-- `/admin/dashboard`
-- `/admin/products`
-- `/admin/customers`
-- `/admin/sales`
-- `/admin/expenses`
-- `/admin/settings`
-- `/employee/pos`
-- `/employee/reservations`
-- `/client/loyalty`
-- `/client/wheel`
-- `/qr-client`
-
----
-
-## Support douchette code-barres
-La douchette USB fonctionne comme un clavier :
-1. ouvrir `/employee/pos`
-2. cliquer sur **Focus scanner**
-3. scanner l’article
-4. la variante est retrouvée via le code-barres
-
----
-
-## Limites actuelles
-Cette V2 est une base avancée plus riche que la version initiale, mais elle n’est pas encore une solution de production finalisée à 100% pour tous les workflows boutique :
-- pas de PDF facture réelle générée côté serveur
-- pas de WhatsApp réel connecté
-- la roue fonctionne côté interface mais sans moteur complet d’administration/quotas
-- pas encore de tickets imprimables finalisés
-
-La structure est prête pour continuer proprement.
+Les tests creent des bases SQL Server isolees, valident la reprise de l'ancien
+schema et les huit scenarios de synchronisation. Voir les prerequis dans le guide.

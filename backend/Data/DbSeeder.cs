@@ -39,7 +39,8 @@ public class DbSeeder
                     FullName = "Admin Trésor",
                     Username = "admin",
                     Email = "admin@tresor.tn",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(_configuration["Seed:AdminPassword"]
+                        ?? throw new InvalidOperationException("Configure Seed:AdminPassword before seeding.")),
                     RoleId = adminRole.Id,
                     IsActive = true
                 },
@@ -48,7 +49,8 @@ public class DbSeeder
                     FullName = "Employé Boutique",
                     Username = "employe",
                     Email = "employe@tresor.tn",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Employe@123"),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(_configuration["Seed:EmployeePassword"]
+                        ?? throw new InvalidOperationException("Configure Seed:EmployeePassword before seeding.")),
                     RoleId = employeeRole.Id,
                     IsActive = true
                 }

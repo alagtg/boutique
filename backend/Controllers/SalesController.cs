@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Tresor.Api.Data;
 using Tresor.Api.DTOs;
 using Tresor.Api.Models;
+using Tresor.Api.Services;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace Tresor.Api.Controllers;
 
@@ -13,10 +16,19 @@ namespace Tresor.Api.Controllers;
 public class SalesController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly InstallationOptions _installation;
+    private readonly SaleSyncPayloadFactory _payloadFactory;
+    private readonly CustomerSaleEffects _customerEffects;
+    private readonly SalesSyncSignal _syncSignal;
 
-    public SalesController(AppDbContext db)
+    public SalesController(AppDbContext db, InstallationOptions installation,
+        SaleSyncPayloadFactory payloadFactory, CustomerSaleEffects customerEffects, SalesSyncSignal syncSignal)
     {
         _db = db;
+        _installation = installation;
+        _payloadFactory = payloadFactory;
+        _customerEffects = customerEffects;
+        _syncSignal = syncSignal;
     }
 
     [HttpGet]
@@ -195,10 +207,24 @@ public class SalesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "ADMIN,EMPLOYE")]
     public async Task<IActionResult> Create(CreateSaleRequest request)
     {
-        if (request.Lines.Count == 0)
+        if (request.Lines == null || request.Lines.Count == 0 || request.Lines.Any(x => x.Quantity <= 0) ||
+            request.Payments == null || request.Payments.Any(x => x.Amount < 0))
             return BadRequest(new { message = "Aucune ligne de vente" });
+
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var sellerId)) return Unauthorized();
+        request.UserId = sellerId;
+        await using var transaction = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        if (request.CustomerId is int customerId && !await _db.Customers.AnyAsync(x => x.Id == customerId))
+            return BadRequest(new { message = "Client introuvable" });
+        if (request.CashSessionId is int sessionId)
+        {
+            var session = await _db.CashSessions.SingleOrDefaultAsync(x => x.Id == sessionId);
+            if (session == null || session.Status != "OPEN" || (!User.IsInRole("ADMIN") && session.OpenedByUserId != sellerId))
+                return BadRequest(new { message = "Session de caisse non autorisee ou fermee" });
+        }
 
         var requestedLines = request.Lines
             .GroupBy(x => x.ProductVariantId)
@@ -227,7 +253,7 @@ public class SalesController : ControllerBase
         decimal subtotal = 0;
         var sale = new Sale
         {
-            SaleNumber = $"V-{DateTime.UtcNow:yyyyMMddHHmmssfff}",
+            SaleNumber = $"V-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid():N}",
             UserId = request.UserId,
             CustomerId = request.CustomerId,
             CashSessionId = request.CashSessionId,
@@ -289,40 +315,23 @@ public class SalesController : ControllerBase
 
         _db.Sales.Add(sale);
 
-        if (sale.CustomerId.HasValue)
+        await _customerEffects.ApplyAsync(sale);
+        if (_installation.IsCommerce)
+            sale.SyncPayload = JsonSerializer.Serialize(await _payloadFactory.CreateAsync(sale));
+        else
         {
-            var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Id == sale.CustomerId.Value);
-            if (customer is not null)
-            {
-                customer.TotalSpentLifetime += sale.TotalAmount;
-                customer.TotalSpentCurrentMonth += sale.TotalAmount;
-                customer.VipStatus = customer.TotalSpentLifetime >= 1000 || customer.TotalSpentCurrentMonth >= 500;
-
-                var loyalty = await _db.LoyaltyAccounts.FirstOrDefaultAsync(x => x.CustomerId == customer.Id);
-                if (loyalty is not null)
-                {
-                    loyalty.PointsBalance += (int)Math.Floor(sale.TotalAmount / 10);
-                    loyalty.TierLevel = customer.VipStatus ? "VIP" : "STANDARD";
-                }
-
-                if (customer.TotalSpentCurrentMonth > 300 && !await _db.Vouchers.AnyAsync(v => v.CustomerId == customer.Id && v.Code.StartsWith("ROUE-") && v.CreatedAt.Month == DateTime.UtcNow.Month))
-                {
-                    _db.Vouchers.Add(new Voucher
-                    {
-                        CustomerId = customer.Id,
-                        Code = $"ROUE-{customer.Id}-{DateTime.UtcNow:yyyyMM}",
-                        VoucherType = "WHEEL",
-                        Value = 0,
-                        Status = "ACTIVE"
-                    });
-                }
-            }
+            sale.IsSynced = true;
+            sale.SyncedAt = DateTime.UtcNow;
         }
 
         await _db.SaveChangesAsync();
+        await transaction.CommitAsync();
+        if (_installation.IsCommerce) _syncSignal.Notify();
         return Ok(new
         {
             sale.Id,
+            sale.SyncId,
+            sale.IsSynced,
             sale.SaleNumber,
             sale.TotalAmount,
             sale.SubtotalAmount,

@@ -2,6 +2,7 @@ namespace Tresor.Api.Models;
 
 public class CashSession : BaseEntity
 {
+    public Guid SyncId { get; set; } = Guid.NewGuid();
     public int RegisterId { get; set; }
     public Register Register { get; set; } = null!;
     public int OpenedByUserId { get; set; }

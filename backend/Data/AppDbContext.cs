@@ -6,6 +6,7 @@ namespace Tresor.Api.Data;
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    protected AppDbContext(DbContextOptions options) : base(options) { }
 
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Permission> Permissions => Set<Permission>();
@@ -50,6 +51,18 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Customer>().HasIndex(x => x.Phone);
         modelBuilder.Entity<ProductVariant>().HasIndex(x => x.Barcode).IsUnique();
         modelBuilder.Entity<Sale>().HasIndex(x => x.SaleNumber).IsUnique();
+        modelBuilder.Entity<Sale>().HasIndex(x => x.SyncId).IsUnique();
+        modelBuilder.Entity<Sale>().HasIndex(x => new { x.IsSynced, x.Id });
+        modelBuilder.Entity<Sale>().Property(x => x.LastSyncError).HasMaxLength(500);
+        modelBuilder.Entity<CashSession>().HasIndex(x => x.SyncId).IsUnique();
+        modelBuilder.Entity<Customer>().HasIndex(x => x.QrCodeToken).IsUnique();
+        modelBuilder.Entity<Customer>().Property(x => x.QrCodeToken).HasMaxLength(100);
+
+        // SQL Server rejects multiple cascade paths through sales and cash sessions.
+        modelBuilder.Entity<Sale>().HasOne(x => x.User).WithMany(x => x.Sales)
+            .HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Sale>().HasOne(x => x.CashSession).WithMany(x => x.Sales)
+            .HasForeignKey(x => x.CashSessionId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Reservation>().HasIndex(x => x.ReservationNumber).IsUnique();
         modelBuilder.Entity<Voucher>().HasIndex(x => x.Code).IsUnique();
 

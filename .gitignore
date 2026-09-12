@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/.angular/
+**/dist/
+**/*.log
+**/*.db
+**/*.db-*
+**/*.backup-*
+**/appsettings.Local.json
+.local/
+**/installation.clixml
+**/serveur.pfx

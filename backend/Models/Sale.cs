@@ -2,6 +2,12 @@ namespace Tresor.Api.Models;
 
 public class Sale : BaseEntity
 {
+    public Guid SyncId { get; set; } = Guid.NewGuid();
+    public bool IsSynced { get; set; }
+    public DateTime? SyncedAt { get; set; }
+    public int SyncAttempts { get; set; }
+    public string? LastSyncError { get; set; }
+    public string? SyncPayload { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
     public int UserId { get; set; }
     public User User { get; set; } = null!;

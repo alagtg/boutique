@@ -91,7 +91,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "ADMIN,EMPLOYE")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create(CreateProductRequest request)
     {
         var isAdmin = User.IsInRole("ADMIN");
@@ -150,7 +150,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "ADMIN,EMPLOYE")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Update(int id, CreateProductRequest request)
     {
         var isAdmin = User.IsInRole("ADMIN");
@@ -215,7 +215,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost("{id:int}/image")]
-    [Authorize(Roles = "ADMIN,EMPLOYE")]
+    [Authorize(Roles = "ADMIN")]
     [RequestSizeLimit(8_000_000)]
     public async Task<IActionResult> UploadImage(int id, IFormFile file)
     {

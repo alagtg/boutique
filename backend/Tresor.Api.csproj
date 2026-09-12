@@ -6,6 +6,7 @@
     <RootNamespace>Tresor.Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Content Update="wwwroot/uploads/**" CopyToPublishDirectory="Never" Condition="'$(DeploymentPackage)' == 'true'" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5">
