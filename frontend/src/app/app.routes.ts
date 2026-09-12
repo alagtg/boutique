@@ -14,10 +14,12 @@ import { QrPageComponent } from './features/client/qr/qr-page.component';
 import { WheelPageComponent } from './features/client/wheel/wheel-page.component';
 import { StockPurchasesPageComponent } from './features/admin/stock-purchases/stock-purchases-page.component';
 import { BiDashboardPageComponent } from './features/admin/bi-dashboard/bi-dashboard-page.component';
+import { CustomerDisplayPageComponent } from './features/client/customer-display/customer-display-page.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'qr-client', component: QrPageComponent },
+  { path: 'customer-display', component: CustomerDisplayPageComponent },
   { path: '', redirectTo: 'admin/dashboard', pathMatch: 'full' },
   { path: 'admin/dashboard', component: DashboardPageComponent, canActivate: [authGuard] },
   { path: 'admin/bi-dashboard', component: BiDashboardPageComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },

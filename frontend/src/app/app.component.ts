@@ -74,7 +74,7 @@ export class AppComponent {
   }
 
   isPublicRoute() {
-    return this.router.url.startsWith('/login') || this.router.url.startsWith('/qr-client') || this.router.url.startsWith('/client/wheel');
+    return this.router.url.startsWith('/login') || this.router.url.startsWith('/qr-client') || this.router.url.startsWith('/client/wheel') || this.router.url.startsWith('/customer-display');
   }
 
   isAdmin() {
