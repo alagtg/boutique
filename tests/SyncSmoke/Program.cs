@@ -126,6 +126,12 @@ try
     var proxy = Task.Run(async () =>
     {
         var context = await listener.GetContextAsync();
+        while (context.Request.HttpMethod != "POST")
+        {
+            context.Response.StatusCode = 503;
+            context.Response.Close();
+            context = await listener.GetContextAsync();
+        }
         using var request = new HttpRequestMessage(HttpMethod.Post, backUrl + "/api/sync/sales");
         request.Headers.Add("X-Sync-Key", key);
         request.Content = new StreamContent(context.Request.InputStream);
@@ -167,6 +173,18 @@ try
         Check(response.IsSuccessStatusCode && (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("pending").GetInt32() == 0, "Admin diagnostics show empty queue");
     using (var response = await Authorized(HttpMethod.Post, commerceUrl + "/api/sync/retry", adminToken))
         Check(response.StatusCode == HttpStatusCode.Accepted, "Admin manual retry accepted");
+    await TestBarcodeCatalogue(sellerToken);
+    if (Environment.GetEnvironmentVariable("SYNC_TEST_BROWSER") == "1")
+    {
+        var browserInfo = new ProcessStartInfo("node") { WorkingDirectory = Path.Combine(root, "frontend"), UseShellExecute = false, CreateNoWindow = true };
+        browserInfo.ArgumentList.Add("tests/labels-ui.cjs");
+        browserInfo.ArgumentList.Add(backUrl);
+        browserInfo.ArgumentList.Add(commerceUrl);
+        browserInfo.Environment["TRESOR_TEST_PASSWORD"] = password;
+        using var browserTest = Process.Start(browserInfo)!;
+        await browserTest.WaitForExitAsync().WaitAsync(TimeSpan.FromMinutes(3));
+        Check(browserTest.ExitCode == 0, "Browser label and scanner workflow");
+    }
     Console.WriteLine("ALL SYNCHRONIZATION CHECKS PASSED. Test databases retained for inspection.");
 }
 catch
@@ -284,4 +302,33 @@ async Task TestAdoption()
     Check(!(await adopted.Database.GetPendingMigrationsAsync()).Any(), "BackOffice migration baseline adopted");
     await SqlServerTransition.AdoptAsync(adopted, new ConfigurationBuilder().Build(), NullLogger.Instance);
     Check(await adopted.Sales.CountAsync() == 1, "Adoption is replayable");
+}
+
+async Task TestBarcodeCatalogue(string sellerToken)
+{
+    var admin = await Login(backUrl, "admin-test");
+    int categoryId;
+    await using (var db = Back()) categoryId = (await db.Categories.FirstAsync()).Id;
+    using var response = await Authorized(HttpMethod.Post, backUrl + "/api/products", admin, new
+    {
+        productName = "Nouveau vetement", categoryId, variant = new { color = "Noir", size = "M", salePrice = 40, currentStock = 3, minStock = 1 }
+    });
+    response.EnsureSuccessStatusCode();
+    var barcode = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("barcode").GetString()!;
+    Check(barcode.Length == 12 && barcode.All(char.IsAsciiDigit), "Server generated numeric barcode");
+    for (var attempt = 0; attempt < 150; attempt++)
+    {
+        using var lookup = await Authorized(HttpMethod.Get, commerceUrl + "/api/productvariants/lookup?barcode=" + Uri.EscapeDataString(barcode), sellerToken);
+        if (lookup.IsSuccessStatusCode)
+        {
+            var item = await lookup.Content.ReadFromJsonAsync<JsonElement>();
+            Check(item.GetProperty("barcode").GetString() == barcode && item.GetProperty("size").GetString() == "M", "New labelled variant arrives automatically in Commerce and resolves by scan");
+            await using var db = Commerce();
+            Check((await db.ProductVariants.SingleAsync(x => x.Barcode == "SYNC-BARCODE")).CurrentStock == 96,
+                "Catalogue refresh preserves existing local stock");
+            return;
+        }
+        await Task.Delay(200);
+    }
+    throw new Exception("New product did not arrive in Commerce catalogue.");
 }

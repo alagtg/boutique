@@ -65,6 +65,23 @@ public sealed class SyncController(InstallationOptions installation, AppDbContex
         return Ok(data);
     }
 
+    [HttpGet("catalogue")]
+    [Authorize(AuthenticationSchemes = SyncKeyAuthenticationHandler.SchemeName)]
+    public async Task<IActionResult> Catalogue(CancellationToken ct)
+    {
+        if (!installation.IsBackOffice) return NotFound();
+        await using var transaction = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
+        var data = new CommerceReferenceDto
+        {
+            Categories = await db.Categories.AsNoTracking().ToListAsync(ct),
+            Products = await db.Products.AsNoTracking().ToListAsync(ct),
+            Variants = await db.ProductVariants.AsNoTracking().ToListAsync(ct)
+        };
+        foreach (var variant in data.Variants) variant.PurchasePrice = 0;
+        await transaction.CommitAsync(ct);
+        return Ok(data);
+    }
+
     [HttpGet("status")]
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Status(CancellationToken ct)

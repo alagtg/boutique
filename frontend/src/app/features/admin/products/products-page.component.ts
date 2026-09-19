@@ -4,6 +4,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { DataService } from '../../../core/data.service';
 import { API_BASE_URL } from '../../../core/api.config';
 import { AuthService } from '../../../core/auth.service';
+import { LabelPrinterService } from '../../../core/label-printer.service';
 
 @Component({
   selector: 'app-products-page',
@@ -39,7 +40,7 @@ import { AuthService } from '../../../core/auth.service';
             <input *ngIf="isAdmin() && !editingProductId" class="input" [(ngModel)]="form.purchaseDate" type="date" title="Date achat stock">
             <input class="input" [(ngModel)]="form.salePrice" type="number" placeholder="Prix vente">
             <input class="input" [(ngModel)]="form.stock" type="number" placeholder="Stock initial">
-            <input class="input" [(ngModel)]="form.barcode" placeholder="Code-barres auto si vide">
+            <input class="input" [(ngModel)]="form.barcode" [readOnly]="!!editingProductId" placeholder="Code-barres auto si vide">
           </div>
         </div>
 
@@ -60,9 +61,15 @@ import { AuthService } from '../../../core/auth.service';
         <p class="muted" *ngIf="isAdmin() && !editingProductId">Mettez le prix d'achat a 0 pour un ancien stock deja paye. Un prix superieur a 0 sera ajoute automatiquement au registre Achats de stock.</p>
 
         <div class="toolbar-actions" style="margin-top:16px">
-          <button class="btn" (click)="save()">Enregistrer article</button>
+          <button class="btn" [disabled]="saving" (click)="save()">{{ saving ? 'Enregistrement...' : 'Enregistrer article' }}</button>
+          <button class="btn secondary" [disabled]="!!editingProductId || saving" (click)="generateBarcodeAndFill()">Code-barres auto</button>
           <button class="btn secondary" (click)="resetForm()">Vider</button>
           <button class="btn ghost" *ngIf="editingProductId" (click)="cancelEdit()">Annuler edition</button>
+        </div>
+        <div class="toolbar-actions" style="margin-top:12px;flex-wrap:wrap">
+          <label><input type="checkbox" [(ngModel)]="printAfterSave"> Imprimer apres creation</label>
+          <label>Format <select class="select" [(ngModel)]="labelSize"><option value="50x30">50 x 30 mm</option><option value="60x40">60 x 40 mm</option><option value="80x40">80 x 40 mm</option></select></label>
+          <label>Exemplaires <input class="input" style="width:80px" type="number" min="1" max="100" step="1" [(ngModel)]="labelCopies"></label>
         </div>
         <p *ngIf="message()" class="badge" style="margin-top:12px">{{ message() }}</p>
       </div>
@@ -122,6 +129,7 @@ import { AuthService } from '../../../core/auth.service';
           </div>
           <div class="product-actions">
             <button class="btn secondary" (click)="editProduct(p)">Editer</button>
+            <button class="btn secondary" style="grid-column:1/-1;white-space:normal;overflow-wrap:anywhere" *ngFor="let v of p.variants" (click)="printProductLabel(p, v)">Etiquette {{ v.color }} {{ v.size }}</button>
             <button class="btn danger" *ngIf="isAdmin()" (click)="deleteProduct(p)">Supprimer</button>
           </div>
         </div>
@@ -147,6 +155,11 @@ import { AuthService } from '../../../core/auth.service';
 export class ProductsPageComponent {
   private data = inject(DataService);
   private auth = inject(AuthService);
+  private labelPrinter = inject(LabelPrinterService);
+  printAfterSave = true;
+  labelSize = '50x30';
+  labelCopies = 1;
+  saving = false;
   private assetBaseUrl = API_BASE_URL.replace('/api', '');
 
   products = signal<any[]>([]);
@@ -156,6 +169,7 @@ export class ProductsPageComponent {
   newCategoryName = '';
   selectedCategory = '';
   editingProductId: number | null = null;
+  editingBrandId: number | null = null;
   page = 1;
   pageSize = 12;
   selectedFile: File | null = null;
@@ -206,17 +220,23 @@ export class ProductsPageComponent {
   }
 
   save() {
+    if (this.saving) return;
     if (!this.form.productName.trim()) {
       this.message.set('Nom article obligatoire');
       return;
     }
+
+    const printWindow = !this.editingProductId && this.printAfterSave ? this.labelPrinter.open() : null;
+    const labelForm = { ...this.form };
+    const labelSize = this.labelSize;
+    const labelCopies = this.labelCopies;
 
     const payload = {
       productName: this.form.productName,
       reference: this.form.reference,
       description: '',
       categoryId: Number(this.form.categoryId),
-      brandId: 1,
+      brandId: this.editingBrandId,
       purchaseDate: new Date(this.form.purchaseDate).toISOString(),
       variant: {
         id: this.form.variantId,
@@ -234,12 +254,23 @@ export class ProductsPageComponent {
       ? this.data.updateProduct(this.editingProductId, payload)
       : this.data.createProduct(payload);
 
+    this.saving = true;
     request.subscribe({
       next: (created: any) => {
+        this.saving = false;
+        const barcode = created?.barcode || this.form.barcode;
         const productId = this.editingProductId || created.id;
+
+        let printError = '';
+        if (printWindow && barcode) {
+          try { this.labelPrinter.print(printWindow, { ...labelForm, barcode, price: Number(labelForm.salePrice || 0) }, labelSize, labelCopies); }
+          catch (error) { printWindow.close(); printError = error instanceof Error ? error.message : 'Impression impossible'; }
+        } else if (!this.editingProductId && this.printAfterSave) printError = 'Popup bloquee : utiliser le bouton Etiquette de cet article.';
+        if (printError) this.message.set(`Article enregistre. ${printError}`);
+
         if (this.selectedFile && productId) {
           this.data.uploadProductImage(productId, this.selectedFile).subscribe({
-            next: () => this.afterSave(this.editingProductId ? 'Produit et photo modifies' : 'Produit et photo enregistres'),
+            next: () => this.afterSave(printError ? `Article enregistre. ${printError}` : this.editingProductId ? 'Produit et photo modifies' : 'Produit et photo enregistres'),
             error: () => {
               this.message.set('Produit enregistre, mais upload photo impossible');
               this.load();
@@ -248,9 +279,9 @@ export class ProductsPageComponent {
           return;
         }
 
-        this.afterSave(this.editingProductId ? 'Produit modifie' : 'Produit enregistre');
+        this.afterSave(printError ? `Article enregistre. ${printError}` : this.editingProductId ? 'Produit modifie' : 'Produit enregistre');
       },
-      error: (err) => this.message.set(err?.error?.message || 'Erreur enregistrement')
+      error: (err) => { this.saving = false; printWindow?.close(); this.message.set(err?.error?.message || 'Erreur enregistrement'); }
     });
   }
 
@@ -259,6 +290,7 @@ export class ProductsPageComponent {
     this.selectedFile = null;
     this.previewUrl.set('');
     this.editingProductId = null;
+    this.editingBrandId = null;
   }
 
   cancelEdit() {
@@ -269,6 +301,7 @@ export class ProductsPageComponent {
   editProduct(product: any) {
     const variant = product.variants?.[0] || {};
     this.editingProductId = product.id;
+    this.editingBrandId = product.brandId ?? null;
     this.form = {
       productName: product.productName || '',
       reference: product.reference || '',
@@ -357,6 +390,25 @@ export class ProductsPageComponent {
 
   money(value: number | null | undefined) {
     return `${Number(value || 0).toFixed(2)} DT`;
+  }
+
+  generateBarcodeAndFill() {
+    this.data.newBarcode().subscribe({
+      next: value => { this.form.barcode = value.barcode; },
+      error: error => this.message.set(error?.error?.message || 'Generation impossible')
+    });
+  }
+
+  printProductLabel(product: any, variant: any) {
+    const target = this.labelPrinter.open();
+    if (!target) { this.message.set('Autorisez les popups pour imprimer une etiquette.'); return; }
+    try {
+      this.labelPrinter.print(target, { productName: product.productName, barcode: String(variant.barcode || ''),
+        price: Number(variant.salePrice), color: variant.color, size: variant.size }, this.labelSize, this.labelCopies);
+    } catch (error) {
+      target.close();
+      this.message.set(error instanceof Error ? error.message : 'Impression impossible');
+    }
   }
 
   private afterSave(message: string) {

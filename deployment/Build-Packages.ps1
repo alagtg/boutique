@@ -1,4 +1,6 @@
 $ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 $root = Split-Path $PSScriptRoot -Parent
 $stamp = (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [Guid]::NewGuid().ToString('N').Substring(0, 6)
 $output = Join-Path $root ".local\deploiement-$stamp"
@@ -25,6 +27,7 @@ foreach ($entry in @(@{ Folder='PC-Principal'; Mode='BackOffice' }, @{ Folder='P
         ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $target }
     $entry.Mode | Set-Content -LiteralPath (Join-Path $target 'poste.txt') -Encoding ASCII
     Copy-Item -LiteralPath (Join-Path $root 'docs/INSTALLATION-DEUX-PC.md') -Destination (Join-Path $target 'LISEZ-MOI.md')
+    Copy-Item -LiteralPath (Join-Path $root 'docs/ETIQUETTES-DOUCHETTE.md') -Destination $target
     $uploads = Join-Path $root 'backend/wwwroot/uploads'
     if ($entry.Mode -eq 'BackOffice' -and (Test-Path -LiteralPath $uploads)) {
         Copy-Item -LiteralPath $uploads -Destination $wwwroot -Recurse -Force
@@ -36,7 +39,13 @@ foreach ($entry in @(@{ Folder='PC-Principal'; Mode='BackOffice' }, @{ Folder='P
     $unexpected = Get-ChildItem -LiteralPath $target -Recurse -File | Where-Object { $_.Extension -in '.db','.clixml','.pfx','.log' }
     if ($unexpected) { throw 'Fichiers locaux inattendus dans le paquet. Publication interrompue.' }
     $zip = Join-Path $output ($entry.Folder + '.zip')
-    Compress-Archive -LiteralPath $target -DestinationPath $zip -CompressionLevel Optimal
+    $archive = [IO.Compression.ZipFile]::Open($zip, [IO.Compression.ZipArchiveMode]::Create)
+    try {
+        Get-ChildItem -LiteralPath $target -File -Recurse | ForEach-Object {
+            $relative = $_.FullName.Substring($target.Length + 1).Replace('\', '/')
+            [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $_.FullName, ($entry.Folder + '/' + $relative)) | Out-Null
+        }
+    } finally { $archive.Dispose() }
     $manifest += [pscustomobject]@{ File = (Split-Path $zip -Leaf); Bytes = (Get-Item $zip).Length; SHA256 = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash }
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'SHA256.json') -Encoding UTF8

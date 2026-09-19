@@ -268,11 +268,11 @@ export class PosPageComponent implements AfterViewInit {
   scan() {
     const code = this.barcode.trim();
     if (!code) return;
+    this.barcode = '';
 
     this.data.variantByBarcode(code).subscribe({
       next: (variant) => {
         if (this.addVariantToCart(variant, 1)) this.message.set('Article ajoute');
-        this.barcode = '';
         this.focusBarcode();
       },
       error: () => {

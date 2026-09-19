@@ -112,6 +112,9 @@ public class ProductsController : ControllerBase
         if (await _db.ProductVariants.AnyAsync(v => v.Barcode == barcode))
             return BadRequest(new { message = "Code-barres déjà utilisé" });
 
+        if (!BarcodeService.IsPrintable(barcode))
+            return BadRequest(new { message = "Code-barres : 1 a 40 caracteres ASCII sans espaces." });
+
         var variant = new ProductVariant
         {
             SKU = string.IsNullOrWhiteSpace(request.Variant.SKU) ? _barcodeService.GenerateSku(request.ProductName) : request.Variant.SKU!,
@@ -171,6 +174,8 @@ public class ProductsController : ControllerBase
 
         if (await _db.ProductVariants.AnyAsync(v => v.Id != variant.Id && v.Barcode == barcode))
             return BadRequest(new { message = "Code-barres deja utilise" });
+        if (barcode != variant.Barcode)
+            return BadRequest(new { message = "Le code-barres d'une variante existante est permanent. Creer une nouvelle variante si necessaire." });
 
         product.ProductName = request.ProductName;
         product.Reference = request.Reference;

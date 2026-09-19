@@ -2,11 +2,14 @@ namespace Tresor.Api.Services;
 
 public class BarcodeService
 {
-    public string Generate(string prefix = "TN")
+    public string Generate()
     {
-        var number = DateTime.UtcNow.Ticks.ToString()[^10..];
-        return $"{prefix}{number}";
+        return "20" + System.Security.Cryptography.RandomNumberGenerator.GetInt32(100000).ToString("D5")
+            + System.Security.Cryptography.RandomNumberGenerator.GetInt32(100000).ToString("D5");
     }
+
+    public static bool IsPrintable(string value) => value.Length is >= 1 and <= 40 &&
+        value.All(c => c is >= '!' and <= '~');
 
     public string GenerateSku(string productName)
     {

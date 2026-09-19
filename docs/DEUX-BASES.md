@@ -318,10 +318,11 @@ vers BackOffice. Les reservations, changements clients sans vente, depenses et
 fermetures de caisse ulterieures ne sont pas une replication bidirectionnelle.
 La session transmise represente son etat au moment de la vente.
 
-Le provisioning initial est un instantane. Les modifications ulterieures du catalogue,
-des comptes, du stock central ou de la fidelite ne sont pas automatiquement redescendues.
-Planifier leur mise a jour avant une exploitation reguliere ; ne pas recreer CommerceDB
-pour rafraichir les references, car elle contient les ventes locales. Les barcodes et
+Le provisioning initial est complete par une recuperation periodique du catalogue :
+nouveaux articles/variantes, prix, libelles et etats actifs, avec leurs codes stables.
+Les stocks des variantes deja presentes restent locaux. Les comptes, photos,
+reapprovisionnements et cumuls de fidelite ne sont pas automatiquement redescendus.
+Ne pas recreer CommerceDB pour rafraichir les references, car elle contient les ventes locales. Les barcodes et
 usernames deja utilises doivent rester stables. Un seul stock initial est copie : ce
 mecanisme ne constitue pas une allocation de stock multi-caisses.
 

@@ -65,7 +65,11 @@ export class DataService {
   }
 
   variantByBarcode(barcode: string) {
-    return this.http.get<any>(`${API_BASE_URL}/productvariants/barcode/${barcode}`);
+    return this.http.get<any>(`${API_BASE_URL}/productvariants/lookup?barcode=${encodeURIComponent(barcode)}`);
+  }
+
+  newBarcode() {
+    return this.http.get<{ barcode: string }>(`${API_BASE_URL}/productvariants/new-barcode`);
   }
 
   customers() {

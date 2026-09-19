@@ -18,6 +18,15 @@ public sealed class SalesSyncBackgroundService(IServiceScopeFactory scopes, Sale
             {
                 await using var scope = scopes.CreateAsyncScope();
                 await scope.ServiceProvider.GetRequiredService<ISalesSyncService>().SyncPendingSalesAsync(stoppingToken);
+                try
+                {
+                    await scope.ServiceProvider.GetRequiredService<CatalogueSyncService>().RefreshAsync(stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { throw; }
+                catch (Exception ex)
+                {
+                    logger.LogWarning("Catalogue refresh failed ({ErrorType}); existing local catalogue retained.", ex.GetType().Name);
+                }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
             catch (Exception ex)

@@ -46,14 +46,16 @@ if (installation.IsCommerce)
         !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment) ||
         uri.AbsolutePath != "/" || uri.Scheme == "http" && !sync.AllowInsecureHttp)
         throw new InvalidOperationException("BackOfficeApi:BaseUrl must be an HTTPS origin. HTTP requires explicit AllowInsecureHttp.");
-    builder.Services.AddHttpClient("BackOfficeApi", client =>
+    foreach (var clientName in new[] { "BackOfficeApi", "BackOfficeReference" })
+    builder.Services.AddHttpClient(clientName, client =>
     {
         client.BaseAddress = uri;
-        client.Timeout = TimeSpan.FromSeconds(sync.TimeoutSeconds);
+        client.Timeout = TimeSpan.FromSeconds(clientName == "BackOfficeReference" ? 60 : sync.TimeoutSeconds);
         client.DefaultRequestHeaders.Add("X-Sync-Key", sync.SyncKey);
     }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
     builder.Services.AddScoped<ISalesSyncService, SalesSyncService>();
     builder.Services.AddScoped<CommerceProvisioningService>();
+    builder.Services.AddScoped<CatalogueSyncService>();
     builder.Services.AddHostedService<SalesSyncBackgroundService>();
 }
 else if (installation.IsBackOffice)

@@ -12,7 +12,7 @@ public sealed class CommerceProvisioningService(CommerceDbContext db, IHttpClien
     {
         if (await db.Users.AnyAsync(ct) || await db.Products.AnyAsync(ct) || await db.Customers.AnyAsync(ct) || await db.Sales.AnyAsync(ct))
             throw new InvalidOperationException("Provisioning requires an empty Commerce database. Existing data was not changed.");
-        var data = await clients.CreateClient("BackOfficeApi").GetFromJsonAsync<CommerceReferenceDto>("api/sync/reference", ct)
+        var data = await clients.CreateClient("BackOfficeReference").GetFromJsonAsync<CommerceReferenceDto>("api/sync/reference", ct)
             ?? throw new InvalidOperationException("Missing reference data.");
         await using var transaction = await db.Database.BeginTransactionAsync(ct);
         var roles = await InsertAsync(data.Roles, ct);

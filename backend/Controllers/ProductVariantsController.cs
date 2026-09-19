@@ -32,9 +32,20 @@ public class ProductVariantsController : ControllerBase
         return Ok(items);
     }
 
+    [HttpGet("new-barcode")]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> NewBarcode()
+    {
+        string barcode;
+        do { barcode = _barcodeService.Generate(); }
+        while (await _db.ProductVariants.AnyAsync(x => x.Barcode == barcode));
+        return Ok(new { barcode });
+    }
+
     [HttpGet("barcode/{barcode}")]
     public async Task<IActionResult> GetByBarcode(string barcode)
     {
+        barcode = barcode.Trim();
         var isAdmin = User.IsInRole("ADMIN");
         var item = await _db.ProductVariants
             .Include(v => v.Product)
@@ -61,6 +72,9 @@ public class ProductVariantsController : ControllerBase
         return item is null ? NotFound(new { message = "Article introuvable" }) : Ok(item);
     }
 
+    [HttpGet("lookup")]
+    public Task<IActionResult> Lookup([FromQuery] string barcode) => GetByBarcode(barcode);
+
     [HttpPost]
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create([FromBody] CreateVariantRequest request, [FromQuery] int productId)
@@ -75,6 +89,8 @@ public class ProductVariantsController : ControllerBase
         if (await _db.ProductVariants.AnyAsync(v => v.Barcode == barcode))
             return BadRequest(new { message = "Code-barres déjà utilisé" });
 
+        if (!BarcodeService.IsPrintable(barcode))
+            return BadRequest(new { message = "Code-barres : 1 a 40 caracteres ASCII sans espaces." });
         var variant = new ProductVariant
         {
             ProductId = productId,

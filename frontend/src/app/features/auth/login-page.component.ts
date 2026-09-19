@@ -31,11 +31,6 @@ import { AuthService } from '../../core/auth.service';
 
         <button class="btn" style="width:100%;margin-top:16px" (click)="login()">Se connecter</button>
 
-        <p class="subtitle" style="margin-top:16px">
-          Admin seed: <strong>admin / Admin&#64;123</strong><br>
-          Employé seed: <strong>employe / Employe&#64;123</strong>
-        </p>
-
         <p *ngIf="error" class="badge danger" style="margin-top:8px">{{ error }}</p>
       </div>
     </div>
@@ -45,14 +40,14 @@ export class LoginPageComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  username = 'admin';
-  password = 'Admin@123';
+  username = '';
+  password = '';
   error = '';
 
   login() {
     this.error = '';
     this.auth.login(this.username, this.password).subscribe({
-      next: () => this.router.navigate(['/admin/dashboard']),
+      next: () => this.router.navigate([this.auth.role() === 'ADMIN' ? '/admin/dashboard' : '/employee/pos']),
       error: (err) => this.error = err?.error?.message || 'Connexion impossible'
     });
   }

@@ -118,14 +118,16 @@ Ne pas exposer ces ports a Internet ni configurer une redirection Internet sur l
 
 ## Limite fonctionnelle a connaitre
 
-La synchronisation automatique couvre les **ventes de caisse vers le principal**.
-L'import initial du catalogue n'est pas une mise a jour automatique permanente :
-les nouveaux articles, nouveaux comptes et changements de prix ulterieurs ne sont
-pas encore redescendus automatiquement. Les reservations et fermetures de caisse
-ulterieures ne font pas partie de cette replication de ventes.
+La synchronisation automatique couvre les **ventes de caisse vers le principal**
+et les **nouveaux articles, codes, prix et etats actifs vers la caisse**.
+Les stocks existants de caisse ne sont pas remplaces par un instantane distant :
+les ventes hors ligne sont ainsi preservees. Les reapprovisionnements existants,
+nouveaux comptes, photos ulterieures, reservations et fermetures de caisse
+ne font pas partie de cette replication. Le catalogue ne contient pas les mots de passe.
 Ne pas recreer CommerceDB pour rafraichir le catalogue : elle contient vos ventes.
 
 Le guide technique `docs/DEUX-BASES.md` du projet detaille les migrations et le diagnostic.
+Le fichier `ETIQUETTES-DOUCHETTE.md` de chaque paquet explique l'imprimante et le scan.
 Les paquets ont ete prepares localement ; leur creation n'installe rien sur le second PC.
 
 Sources Microsoft :
