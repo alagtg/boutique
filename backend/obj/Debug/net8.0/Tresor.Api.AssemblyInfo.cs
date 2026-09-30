@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tresor.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1f9fa125e5a5ed5ada4b329de487c6fa46d6c41")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a8f2e7aa841d8ea0b5b56c2c85d4292a9bac02cf")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tresor.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tresor.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
